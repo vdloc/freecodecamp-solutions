@@ -1,5 +1,4 @@
-
-$fotnLato: 'Lato',
+$fontLato: 'Lato',
 sans-serif;
 $fontPassion: 'Passion One',
 cursive;
@@ -35,7 +34,7 @@ ul {
 
 body {
     font-size: 1.4rem;
-    font-family: $fotnLato;
+    font-family: $fontLato;
 }
 
 section {
@@ -50,6 +49,10 @@ section {
     flex-direction: column;
     align-items: center;
     background: transparent;
+
+    @media screen and (min-width: 1200px) {
+        width: 20vw;
+    }
 }
 
 .header-logo {
@@ -75,7 +78,7 @@ section {
             text-shadow: 0 1px 0 rgba(255, 255, 255, 1), 0 2px 0 rgba(255, 255, 255, 1), 0 3px 0 rgba(255, 255, 255, 1), 0 4px 0 rgba(255, 255, 255, 1), 0 5px 0 rgba(255, 255, 255, 1), 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 -5px 10px rgba(0, 0, 0, 0.247059), 0 -7px 10px rgba(0, 0, 0, 0.2), 0 -15px 20px rgba(0, 0, 0, 0.14902);
         }
 
-        &:active>a {
+        &:active {
             transform: translateY(-2px);
         }
 
@@ -97,7 +100,7 @@ section {
     }
 }
 
-#main {   
+#main {
     min-height: 100vh;
     overflow-y: auto;
     background: transparent;
@@ -112,8 +115,86 @@ section {
 .section-content {
     margin-left: 35vw;
     padding: 10vh 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @media screen and (min-width: 1200px) {
+        margin-left: 25vw;
+    }
+}
+
+.section-title {
+    $color1: rgba(254, 147, 140, 1);
+    $color2: rgba(230, 184, 156, 1);
+    $color3: rgba(234, 210, 172, 1);
+    $color4: rgba(156, 175, 183, 1);
+    $color5: rgba(66, 129, 164, 1);
+    text-align: center;
+    text-transform: uppercase;
+    display: inline-block;
+    margin: auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2rem;
+    background: linear-gradient(to right, $color1 40%, $color2 50%, $color3 60%, $color4 70%, $color5 80%);
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 6rem;
 }
 
 #hero {
-    background-color: rgba(#a3f7b5, .8);
+    $color1: rgba(254, 147, 140, 1);
+    $color2: rgba(230, 184, 156, 1);
+    $color3: rgba(234, 210, 172, 1);
+    $color4: rgba(156, 175, 183, 1);
+    $color5: rgba(66, 129, 164, 1);
+    background-color: rgba($color4, .4);
+}
+
+#contact {
+    $color1: rgba(105, 255, 241, 1);
+    $color2: rgba(105, 72, 115, 1);
+    $color3: rgba(239, 111, 108, 1);
+    $color4: rgba(222, 205, 245, 1);
+    $color5: rgba(207, 209, 26, 1);
+    background-color: rgba($color5, .2);
+}
+
+#form {
+    width: 100%;
+    padding: 0 10%;
+
+    .form-group {
+        margin: auto;
+        margin-top: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    label {
+        @extend .section-title;
+        text-transform: initial;
+        font-size: 1.5rem;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    input {
+        display: block;
+        height: 2.5rem;
+        width: 40%;
+        margin: auto;
+        padding-left: 1rem;
+    }
+
+    #submit {
+        $color5: rgba(66, 129, 164, 1);
+        padding: 0.7rem 1.5rem;
+        border-radius: 3px;
+        background: $color5;
+        margin: auto;
+        font-family: $fontLato;
+        font-weight: bold;
+    }
 }

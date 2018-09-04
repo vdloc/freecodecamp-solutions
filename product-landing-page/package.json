@@ -1,16 +1,21 @@
 {
-  "name": "product-landing-page",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "sass": "sass main.scss:main.css",
-    "sass-watch": "watch \"npm run sass\""
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "watch": "^1.0.2"
-  }
+    "name": "product-landing-page",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "sass": "sass main.scss:main.css",
+        "sass-watch": "watch \"npm run sass\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "watch": "^1.0.2"
+    },
+    "scripts": {
+        "sass": "sass main.scss:main.css",
+        "sass-watch": "watch \"npm run sass\" ",
+        "clean": "rimraf dist/{css/*,js/*,img/*,views/*}"
+    }
 }
