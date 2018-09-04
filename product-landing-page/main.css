@@ -1,0 +1,78 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  outline: 0;
+  box-shadow: 0; }
+
+a, a:hover, a:active, a:visited, a:focus {
+  text-decoration: none;
+  color: currentColor; }
+
+ul {
+  list-style: none; }
+
+:root {
+  font-size: 10px / 16px; }
+
+body {
+  font-size: 1.4rem;
+  font-family: "Lato", sans-serif; }
+
+section {
+  height: 100vh; }
+
+#header {
+  width: 30vw;
+  height: 100vh;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent; }
+
+.header-logo {
+  justify-self: start;
+  padding: 10vw 0 10vw;
+  max-width: 60%; }
+
+#nav-bar {
+  font-family: "Passion One", cursive;
+  font-size: 2rem; }
+  #nav-bar li {
+    text-transform: uppercase; }
+    #nav-bar li > a {
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-shadow: 0 1px 0 #cccccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbbbbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaaaaa, 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.247059), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.14902); }
+    #nav-bar li:hover > a, #nav-bar li:active > a {
+      text-shadow: 0 1px 0 white, 0 2px 0 white, 0 3px 0 white, 0 4px 0 white, 0 5px 0 white, 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 -5px 10px rgba(0, 0, 0, 0.247059), 0 -7px 10px rgba(0, 0, 0, 0.2), 0 -15px 20px rgba(0, 0, 0, 0.14902); }
+    #nav-bar li:active > a {
+      transform: translateY(-2px); }
+    #nav-bar li:first-child {
+      color: #00a6a6; }
+    #nav-bar li:nth-child(2) {
+      color: #eb9486; }
+    #nav-bar li:last-child {
+      color: #dd1c1a; }
+    #nav-bar li:not(:last-child) {
+      margin-bottom: 2rem; }
+
+#main {
+  min-height: 100vh;
+  overflow-y: auto;
+  background: transparent;
+  background-clip: content-box; }
+
+#header-img {
+  display: block;
+  max-width: 100%; }
+
+.section-content {
+  margin-left: 35vw;
+  padding: 10vh 0; }
+
+#hero {
+  background-color: rgba(163, 247, 181, 0.8); }
+
+/*# sourceMappingURL=main.css.map */

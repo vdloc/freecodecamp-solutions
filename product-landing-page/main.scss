@@ -1,0 +1,119 @@
+
+$fotnLato: 'Lato',
+sans-serif;
+$fontPassion: 'Passion One',
+cursive;
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    bottom: 0;
+    outline: 0;
+    box-shadow: 0;
+}
+
+a {
+
+    &,
+    &:hover,
+    &:active,
+    &:visited,
+    &:focus {
+        text-decoration: none;
+        color: currentColor;
+    }
+}
+
+ul {
+    list-style: none;
+}
+
+:root {
+    font-size: 10px / 16px;
+}
+
+body {
+    font-size: 1.4rem;
+    font-family: $fotnLato;
+}
+
+section {
+    height: 100vh;
+}
+
+#header {
+    width: 30vw;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+}
+
+.header-logo {
+    justify-self: start;
+    padding: 10vw 0 10vw;
+    max-width: 60%;
+}
+
+#nav-bar {
+    font-family: $fontPassion;
+    font-size: 2rem;
+
+    & li {
+        text-transform: uppercase;
+
+        &>a {
+            transition: all .25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 1px 0 rgb(204, 204, 204), 0 2px 0 rgb(201, 201, 201), 0 3px 0 rgb(187, 187, 187), 0 4px 0 rgb(185, 185, 185), 0 5px 0 rgb(170, 170, 170), 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.247059), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.14902);
+        }
+
+        &:hover>a,
+        &:active>a {
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 1), 0 2px 0 rgba(255, 255, 255, 1), 0 3px 0 rgba(255, 255, 255, 1), 0 4px 0 rgba(255, 255, 255, 1), 0 5px 0 rgba(255, 255, 255, 1), 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 -5px 10px rgba(0, 0, 0, 0.247059), 0 -7px 10px rgba(0, 0, 0, 0.2), 0 -15px 20px rgba(0, 0, 0, 0.14902);
+        }
+
+        &:active>a {
+            transform: translateY(-2px);
+        }
+
+        &:first-child {
+            color: #00a6a6;
+        }
+
+        &:nth-child(2) {
+            color: #eb9486;
+        }
+
+        &:last-child {
+            color: #dd1c1a;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 2rem;
+        }
+    }
+}
+
+#main {   
+    min-height: 100vh;
+    overflow-y: auto;
+    background: transparent;
+    background-clip: content-box;
+}
+
+#header-img {
+    display: block;
+    max-width: 100%;
+}
+
+.section-content {
+    margin-left: 35vw;
+    padding: 10vh 0;
+}
+
+#hero {
+    background-color: rgba(#a3f7b5, .8);
+}
