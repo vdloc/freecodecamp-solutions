@@ -1,0 +1,233 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  outline: 0;
+}
+
+input[type=number],
+input[type=text],
+input[type=email],
+select,
+textarea,
+button[type=submit] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  outline: 0;
+  box-shadow: 0;
+}
+
+body {
+  font-family: "Abel", sans-serif;
+  font-weight: normal;
+  font-size: 62.5%;
+  background: #2ec0f9;
+}
+
+.content-wrapper {
+  margin: auto;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+@media screen and (max-width: 1200px) {
+  .content-wrapper {
+    width: 80%;
+  }
+}
+@media screen and (min-width: 1201px) {
+  .content-wrapper {
+    width: 80rem;
+  }
+}
+
+.main-content {
+  border-radius: 3px;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.3);
+  padding: 5%;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  background-image: url("https://www.transparenttextures.com/patterns/brushed-alum-dark.png");
+}
+
+#title {
+  font-family: "Shrikhand", cursive;
+  font-weight: bold;
+  font-size: 3rem;
+  margin-bottom: 2rem;
+  display: inline-block;
+  background: linear-gradient(30deg, #f9c610 0%, #ea3446 20%, #652e99 40%, #d48735 60%, #42bccd 100%);
+  color: transparent;
+  font-size: 4rem;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+#title::first-letter {
+  font-size: 5rem;
+}
+
+#description {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+#survey-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-content {
+  display: flex;
+}
+@media screen and (max-width: 630px) {
+  .form-content {
+    flex-direction: column;
+  }
+}
+
+.form-row {
+  display: flex;
+}
+
+.form-column {
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 5%;
+}
+@media screen and (max-width: 630px) {
+  .form-column {
+    flex-grow: 1;
+    padding-right: 0;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column-reverse;
+  margin-bottom: 1rem;
+}
+
+.form-gender > .form-group {
+  display: inline-block;
+}
+.form-gender > .form-group > input {
+  margin-right: 0.3rem;
+}
+.form-gender > .form-group:not(:last-child) {
+  margin-right: 0.7rem;
+}
+
+.form-label {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  transition: all 0.2s ease-in-out;
+  height: 2.5rem;
+  padding-left: 0.5rem;
+  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  background: linear-gradient(30deg, rgba(249, 198, 16, 0.1) 0%, rgba(248, 104, 37, 0.1) 100%), linear-gradient(220deg, rgba(248, 104, 37, 0.1) 0%, rgba(234, 52, 70, 0.1) 100%), linear-gradient(-30deg, rgba(234, 52, 70, 0.1) 0%, rgba(101, 46, 153, 0.1) 100%), linear-gradient(314deg, rgba(101, 46, 153, 0.1) 0%, rgba(66, 188, 205, 0.1) 100%) !important;
+}
+.form-input:invalid {
+  box-shadow: 0px 0px 3px 0.5px #276fd3, 0px 0px 3px 0.6px #39a7db, 0px 0px 3px 0.7px #1fffbc, 0px 0px 3px 0.8px #4eb0c6, 0px 0px 3px 0.9px #41bcd8;
+}
+.form-input:focus {
+  box-shadow: 0px 0px 3px 0.5px #eac234, 0px 0px 3px 0.6px #345893, 0px 0px 3px 0.7px #1fffbc, 0px 0px 3px 0.8px #e60067, 0px 0px 3px 0.9px #fb4c3c;
+  background: linear-gradient(30deg, rgba(234, 194, 52, 0.1) 0%, rgba(52, 88, 147, 0.1) 100%), linear-gradient(220deg, rgba(52, 88, 147, 0.1) 0%, rgba(31, 255, 188, 0.1) 100%), linear-gradient(-30deg, rgba(31, 255, 188, 0.1) 0%, rgba(230, 0, 103, 0.1) 100%), linear-gradient(314deg, rgba(230, 0, 103, 0.1) 0%, rgba(251, 76, 60, 0.1) 100%) !important;
+}
+
+.form-group-select {
+  position: relative;
+}
+.form-group-select:before {
+  content: " ";
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0.5rem 0.25rem 0 0.25rem;
+  border-color: rgba(52, 89, 149, 0.7) transparent transparent transparent;
+  position: absolute;
+  bottom: calc(2.5rem / 2);
+  right: 1rem;
+  transform: translateY(50%);
+  z-index: 10;
+  -webkit-transform: translateY(50%);
+  -moz-transform: translateY(50%);
+  -ms-transform: translateY(50%);
+  -o-transform: translateY(50%);
+}
+
+.form-area .form-group {
+  display: inline-block;
+}
+
+input[type=checkbox] {
+  margin-right: 0.5rem;
+}
+
+textarea.form-input {
+  height: 5rem;
+  resize: none;
+  padding-top: 0.5rem;
+}
+
+.form-submit {
+  width: 20%;
+  padding: 0.5rem;
+  border-radius: 5px;
+  font-family: "Fredoka One", cursive;
+  font-weight: semibold;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  margin: auto;
+  margin-top: 3rem;
+  background: linear-gradient(30deg, #f9c610 0%, #ea3446 20%, #652e99 40%, #d48735 60%, #42bccd 80%);
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  position: relative;
+  box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.5), inset 0px -1px 3px 1px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.form-submit:after {
+  content: "";
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.4);
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  border-radius: 3px;
+}
+.form-submit:active {
+  transform: translateY(-2px);
+  -webkit-transform: translateY(-2px);
+  -moz-transform: translateY(-2px);
+  -ms-transform: translateY(-2px);
+  -o-transform: translateY(-2px);
+}
+
+/*# sourceMappingURL=main.css.map */
