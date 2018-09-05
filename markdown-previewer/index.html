@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Lato|Roboto|Source+Sans+Pro" rel="stylesheet"> 
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.5.0/marked.min.js"></script>
+    <script src="main.js"></script>
+   
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- wrapper -->
+    <div class="page-wrapper">
+        <!-- panel -->
+        <div class="panel" id="panel-editor">
+            <!-- header -->
+            <header class="menu-bar">
+                <!-- left -->
+                <div class="menu-bar__left">
+                    <h2 class="panel-title">
+                        Editor
+                    </h2>
+                </div>
+                <!-- right -->
+                <div class="menu-bar__right">
+                    <div class="yin-yang" id="yin-yang-editor">
+                        
+                    </div>
+                </div>
+            </header>
+            <!-- content -->
+            <div class="panel-content">
+                <textarea name="editer" id="editor" cols="30" rows="10">
+                    # Welcome to my React Markdown preview!
+# This is a heading.
+## This is a sub-heading...
+### And here's some other cool stuff:
+  
+Heres some code, `<div></div>`, between 2 backticks.
+
+```
+// this is multi-line code:
+
+function anotherExample(firstLine, lastLine) {
+  if (firstLine == '```' && lastLine == '```') {
+    return multiLineCode;
+  }
+}
+```
+  
+You can also make text **bold**... whoa!
+Or _italic_.
+Or... wait for it... **_both!_**
+And feel free to go crazy ~~crossing stuff out~~.
+
+There's also [links](https://www.freecodecamp.com){:target="_blank"}, and
+> Block Quotes!
+
+And if you want to get really crazy, even tables:
+
+Wild Header | Crazy Header | Another Header?
+------------ | ------------- | ------------- 
+Your content can | be here, and it | can be here....
+And here. | Okay. | I think we get it.
+
+- And of course there are lists.
+  - Some are bulleted.
+     - With different indentation levels.
+        - That look like this.
+
+
+1. And there are numbererd lists too.
+1. Use just 1s if you want! 
+1. But the list goes on...
+- Even if you use dashes or asterisks.
+* And last but not least, let's not forget embedded images:
+
+![React Logo w/ Text](https://goo.gl/Umyytc)
+
+                </textarea>
+            </div>
+        </div>
+        <div class="panel" id="panel-preview">
+            <!-- header -->
+            <header class="menu-bar">
+                <!-- left -->
+                <div class="menu-bar__left">
+                    <h2 class="panel-title">
+                        Preview
+                    </h2>
+                </div>
+                <!-- right -->
+                <div class="menu-bar__right">
+                    <div class="yin-yang" id="yin-yang-preview">
+                        
+                    </div>
+                </div>
+            </header>
+            <!-- content -->
+            <div class="panel-content" id="preview">
+            </div>
+        </div>       
+    </div>
+    <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+</body>
+
+</html>
