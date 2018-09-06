@@ -20,7 +20,8 @@
     "scripts": {
         "sass": "sass main.scss:main.css",
         "sass-watch": "watch \"npm run sass\" ",
-        "clean": "rimraf dist/{css/*,js/*,img/*,views/*}"
+        "clean": "rimraf dist/{css/*,js/*,img/*,views/*}",
+        "browser-sync" : "browser-sync --servers --files *.*"
     },
     "author": "",
     "license": "ISC"
