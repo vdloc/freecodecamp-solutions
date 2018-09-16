@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Exo|Lato|Roboto" rel="stylesheet">
-    <link  href="//db.onlinewebfonts.com/c/1b40984d7a10bcae004877dc48f4cc8f?family=Digital"rel="stylesheet" type="text/css" />
-    <link href="//db.onlinewebfonts.com/c/bf032dd0ed9b7bf20340196135d984fb?family=SwankGothicW90-Bold" rel="stylesheet" type="text/css"/>
+    <link href="//db.onlinewebfonts.com/c/1b40984d7a10bcae004877dc48f4cc8f?family=Digital" rel="stylesheet" type="text/css" />
+    <link href="//db.onlinewebfonts.com/c/bf032dd0ed9b7bf20340196135d984fb?family=SwankGothicW90-Bold" rel="stylesheet"
+        type="text/css" />
 
     <link rel="stylesheet" href="main.css">
     <title>Document</title>
@@ -41,13 +42,13 @@
                         <!-- input -->
                         <div class="number-input">
                             <!-- dcre btn -->
-                            <span class="number-input__decre" id="break-decrement">
+                            <span class="number-input__incre" id="break-increment">
                                 <i class="fas fa-arrow-up"></i>
                             </span>
                             <!-- value -->
                             <span class="number-input__number" id="break-length">5</span>
                             <!-- incre btn -->
-                            <span class="number-input__incre" id="break-increment">
+                            <span class="number-input__decre" id="break-decrement">
                                 <i class="fas fa-arrow-down"></i>
                             </span>
                         </div>
@@ -63,13 +64,13 @@
                         <!-- input -->
                         <div class="number-input">
                             <!-- dcre btn -->
-                            <span id="session-decrement" class="number-input__decre">
+                            <span id="session-increment" class="number-input__incre">
                                 <i class="fas fa-arrow-up"></i>
                             </span>
                             <!-- value -->
                             <span id="session-length" class="number-input__number">25</span>
                             <!-- incre btn -->
-                            <span id="session-increment" class="number-input__incre">
+                            <span id="session-decrement" class="number-input__decre">
                                 <i class="fas fa-arrow-down"></i>
                             </span>
                         </div>
@@ -85,25 +86,35 @@
                         <div class="time-countdown">
                             <!-- header -->
                             <header class="time-countdown__header">
-                                <h3 class="time-countdown__title">
+                                <h3 class="time-countdown__title" id='timer-label'>
                                     Session
                                 </h3>
                             </header>
                             <!-- display -->
-                            <div class="time-countdown__display">
-                                <span class="time-countdown__minute">25</span>
+
+                            <div class="time-countdown__display" id='time-left'>
+                                <span class="time-countdown__minute" id="timer-minute">25</span>
                                 <span class="time-countdown__colon">:</span>
-                                <span class="time-countdown__second">00</span>
+                                <span class="time-countdown__second" id="timer-second">00</span>
                             </div>
-                        </div>
-                        <!-- controls -->
-                        <div class="time-controls">
-                            <span class="time-controls__stat-stop"></span>
-                            <span class="time-controls__reset"></span>
-                        </div>
+                        </div>                       
                     </div>
                     <!-- mirror -->
                     <div class="clock mirror"></div>
+                </div>
+                <!-- controls -->
+                <div class="controls">
+                    <!-- play pause -->
+                    <div class="controls__play-pause" id="start_stop">
+                        <!-- play -->
+                        <div class="controls__play"></div>
+                        <!-- pause -->
+                        <div class="controls__pause"></div>
+                    </div>
+                    <!-- reset -->
+                    <div class="controls__reset" id="reset">
+                        <div class="controls__reset-inner"></div>  
+                    </div>
                 </div>
 
             </main>
@@ -115,6 +126,7 @@
             </footer>
         </div>
     </div>
+    <script src="main.js"></script>
     <!-- <script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script> -->
 </body>
 
