@@ -305,6 +305,8 @@ body {
     &__reset {
         padding: .7rem;       
         @extend %btn;
+        position: relative;
+        z-index: 10;
     }
 
     &__reset-inner {

@@ -26,75 +26,85 @@ window.addEventListener('load', () => {
         console.log(obj)
     }
     let inputControls = (state) => {
+        let decre_list = [input.controls.break.decre, input.controls.session.decre];
+        let incre_list = [input.controls.break.incre, input.controls.session.incre]
+        let session_list = [input.controls.session.incre, input.controls.session.decre]
 
-        let break_group = input.controls.break;
-        let session_group = input.controls.session;
+        function decre() {
+            let val = (this.previousElementSibling.textContent | 0);
+           
+            if (val > 1) {
+                val -= 1;
+                this.previousElementSibling.textContent = val;
+            }
+          
+            if (this.getAttribute('id').search('session') > -1) {
 
-        function change_incre(obj, session) { ///incre button 
+                input.timer.second.textContent = '00';
+                input.timer.minute.textContent = val;
 
-            let val = obj.value.textContent;
+                if (val < 10) {
+                    input.timer.minute.textContent = '0' + val;
+                }
 
+
+            }
+        }
+
+        function incre() {
+            let val = (this.nextElementSibling.textContent | 0);
+         
             if (val < 60) {
-                if (session) {
-                   
-                    if (val < 9) {
-
-                        input.timer.minute.textContent = '0' + ((val | 0) + 1);
-                    } else {
-
-                        input.timer.minute.textContent = (val | 0) + 1;
-                    }
-                }
-                obj.value.textContent = (val | 0) + 1; // convert val string to number
+                val += 1;
+                this.nextElementSibling.textContent = val;
             }
+            if (this.getAttribute('id').search('session') > -1) {
 
-        }
+                input.timer.second.textContent = '00';
+                input.timer.minute.textContent = val;
 
-        function change_decre(obj, session) { //decre button
-
-            let val = obj.value.textContent;
-
-            if (obj.value.textContent > 1) {
-                if (session) {
-                    if (val < 11) {
-                        input.timer.minute.textContent = '0' + ((val | 0) - 1);
-                    } else {
-                        input.timer.minute.textContent = (val | 0) - 1;
-                    }
+                if (val < 10) {
+                    input.timer.minute.textContent = '0' + val;
                 }
-                obj.value.textContent -= 1;
+
             }
+        }
 
-        }
-        let bind = (obj, session) => {
 
-            // incre btn
-            obj.incre.addEventListener('click', change_incre(obj, session))
-            // decre btn
-            obj.decre.addEventListener('click', change_decre(obj, session))
+        let active = () => {
+            for (let item in decre_list) {
+                decre_list[item].addEventListener('click', decre)
+
+            }
+            for (let item in incre_list) {
+                incre_list[item].addEventListener('click', incre)
+            }
         }
-        let unbind = (obj) => {
-            obj.incre.removeEventListener('click', change_incre())
-            obj.decre.removeEventListener('click', change_decre())
+
+        let deactive = () => {
+            for (let item in [input.controls.break.decre, input.controls.session.decre]) {
+                item.removeEventListener('click', decre)
+            }
+            for (let item in [input.controls.break.incre, input.controls.session.incre])
+                item.removeEventListener('click', incre)
         }
-        if (state == 'change') {
-            bind(break_group)
-            bind(session_group, true)
+
+        if (state) {
+            active()
         } else {
-            m('remove')
-            unbind(break_group)
-            unbind(session_group)
+            deactive()
         }
     }
-
-    inputControls('change')
+    inputControls(1)
 
     // timer countdown
 
     let countdown = (state) => {
 
         if (state === 'play') {
+
             let current_second = (input.timer.second.textContent | 0);
+           
             second = setInterval(() => {
 
                 if (current_second === 0) {
@@ -115,21 +125,17 @@ window.addEventListener('load', () => {
 
                 let current_minute = input.timer.minute.textContent;
 
+                current_minute -= 1;
+
                 input.timer.minute.textContent = (current_minute | 0) - 1;
 
-                if ((current_minute | 0) === 0 && !current_second) {
-                    clearInterval(second)
-                    clearInterval(minute)
-                }
+
 
             }, 60 * 1000)
         } else {
-
             clearInterval(second)
             clearInterval(minute)
         }
-
-
     }
 
     let controls = () => {
@@ -144,15 +150,23 @@ window.addEventListener('load', () => {
 
                 countdown('play')
                 play_pause_state = true;
-                inputControls('freeze')
+                inputControls(true)
 
             } else {
-                inputControls('change')
+                inputControls(false)
                 countdown('pause')
                 play_pause_state = false;
             }
         })
+        reset.addEventListener('click', function (event) {
+            input.timer.minute.textContent = '25';
+            input.timer.second.textContent = '00';
+            input.controls.session.value.textContent = '25';
+
+        })
     }
     controls();
-
+    window.addEventListener('click', function (event) {
+        m(event.target)
+    })
 })

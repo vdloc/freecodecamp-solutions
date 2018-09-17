@@ -241,6 +241,8 @@ body {
 }
 .controls__reset {
   padding: 0.7rem;
+  position: relative;
+  z-index: 10;
 }
 .controls__reset-inner {
   width: 25px;
