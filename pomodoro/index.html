@@ -42,15 +42,15 @@
                         <!-- input -->
                         <div class="number-input">
                             <!-- dcre btn -->
-                            <div class="number-input__incre" id="break-increment">
-                               <div class="number-input__incre-inner"></div>
-                            </div>
+                            <span class="number-input__incre" id="break-increment">
+                                <i class="fas fa-arrow-up"></i>
+                            </span>
                             <!-- value -->
                             <span class="number-input__number" id="break-length">5</span>
                             <!-- incre btn -->
-                            <div class="number-input__decre" id="break-decrement">
-                               <div class="number-input__decre-inner"></div>
-                            </div>
+                            <span class="number-input__decre" id="break-decrement">
+                                <i class="fas fa-arrow-down"></i>
+                            </span>
                         </div>
                     </div>
                     <!-- item -->
@@ -64,15 +64,15 @@
                         <!-- input -->
                         <div class="number-input">
                             <!-- dcre btn -->
-                            <div id="session-increment" class="number-input__incre">
+                            <span id="session-increment" class="number-input__incre">
                                 <i class="fas fa-arrow-up"></i>
-                            </div>
+                            </span>
                             <!-- value -->
                             <span id="session-length" class="number-input__number">1</span>
                             <!-- incre btn -->
-                            <div id="session-decrement" class="number-input__decre">
+                            <span id="session-decrement" class="number-input__decre">
                                 <i class="fas fa-arrow-down"></i>
-                            </div>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                             <!-- display -->
 
                             <div class="time-countdown__display" id='time-left'>
-                                <span class="time-countdown__minute" id="timer-minute">01</span>
+                                <span class="time-countdown__minute" id="timer-minute">1</span>
                                 <span class="time-countdown__colon">:</span>
                                 <span class="time-countdown__second" id="timer-second">00</span>
                             </div>
@@ -116,6 +116,10 @@
                         <div class="controls__reset-inner"></div>  
                     </div>
                 </div>
+                <!-- audio -->
+                <audio id="beep" preload="auto" src="https://goo.gl/65cBl1">
+                
+                </audio>
 
             </main>
             <!-- footer -->

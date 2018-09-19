@@ -9,12 +9,8 @@ $color5: rgba(130, 156, 188, 1);
 
 @font-face {
     font-family: "Digital";
-    src: url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.eot");
-    src: url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.eot?#iefix") format("embedded-opentype"),
-        url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.woff2") format("woff2"),
-        url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.woff") format("woff"),
-        url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.ttf") format("truetype"),
-        url("//db.onlinewebfonts.com/t/1b40984d7a10bcae004877dc48f4cc8f.svg#Digital") format("svg");
+    src: url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot");
+    src: url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff") format("woff"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.svg#Digital-7") format("svg");
 }
 
 @font-face {
@@ -54,7 +50,7 @@ body {
     border-radius: 50%;
     cursor: pointer;
     transition: transform .5s ease-in-out;
-    box-shadow: 0 2px 3px 1px rgba($color1, .8);
+    box-shadow: 0 2px 3px 1px rgba($color1, .8), inset 0 0 3px 1px rgba(rgb(90, 121, 151), .3);
     background-color: rgba(#fff, .7);
 
     &:active {
@@ -66,19 +62,32 @@ body {
     }
 }
 
+%texteffect {
+    color: transparent;
+    background-clip: text;
+    background-image: linear-gradient(to left, $color5, $color1);
+}
+
+%vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(-180deg);
+}
+
 .page-wrapper {
     width: 100%;
     height: 100vh;
     display: flex;
-    background-color: rgba($color4, .4);
+    // background-color: rgba($color4, .4);
     justify-content: center;
     overflow: hidden;
 }
 
 .page-header {
-    margin-bottom: 5rem;
-    margin-top: 2rem;
+    margin-bottom: 4rem;
+    margin-top: 2.5rem;
     text-align: center;
+    text-shadow: 0 1px 0 rgb(204, 204, 204), 0 2px 0 rgb(201, 201, 201), 0 3px 0 rgb(187, 187, 187), 0 4px 0 rgb(185, 185, 185), 0 5px 0 rgb(170, 170, 170), 0 6px 1px rgba(0, 0, 0, 0.0980392), 0 0 5px rgba(0, 0, 0, 0.0980392), 0 1px 3px rgba(0, 0, 0, 0.298039), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.247059), 0 10px 10px rgba(0, 0, 0, 0.2), 0 20px 20px rgba(0, 0, 0, 0.14902);
 
     &__title {
         font-size: 6rem;
@@ -92,12 +101,13 @@ body {
 .time-adjust {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 2.5rem;
+    margin-bottom: 5rem;
 
     &__item {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
 
         &:first-child {
             margin-right: 3rem;
@@ -107,35 +117,42 @@ body {
     &__title {
         font-size: 2.5rem;
         font-size: 'Roboto', sans-serif;
+        @extend %texteffect;
+
     }
 }
 
 .number-input {
+    $width: .3rem;
+    $height: 2rem;
+    $bg: linear-gradient(to bottom, $color1, $color5);
     display: flex;
     align-items: center;
+    justify-content: space-between;
 
     &__number {
         margin: 0 2rem;
         font-size: 3rem;
         color: $color5;
+        min-width: 4rem;
+        text-align: center;
     }
 
     &__decre,
     &__incre {
         @extend %btn;
+        padding: 1rem 1.1rem;
         cursor: pointer;
         font-size: 2rem;
 
     }
 
-    &__decre:active,
-    &__incre:active {
-        transform: translateY(1px);
-        -webkit-transform: translateY(1px);
-        -moz-transform: translateY(1px);
-        -ms-transform: translateY(1px);
-        -o-transform: translateY(1px);
+    & i {
+        color: transparent;
+        background-image: linear-gradient(to top, $color5, $color1);
+        background-clip: text;
     }
+
 }
 
 .clock-block {
@@ -146,6 +163,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     position: relative;
     height: 300px;
     width: 700px;
@@ -234,11 +252,17 @@ body {
 
 .time-countdown {
     width: 100%;
+    display: flex;
+    align-items: center;
 
     &__header {
-        margin-top: 2rem;
-        margin-bottom: 4rem;
+        @extend %vertical-text;
+        @extend %texteffect;
         text-align: center;
+        position: absolute;
+        left: -4rem;
+        top: 50%;
+        transform: translateY(-50%) rotate(-180deg);
     }
 
     &__display {
@@ -247,7 +271,7 @@ body {
         text-shadow: 1px 1px 3px rgba(#fff, .4);
         margin-top: 1rem;
         font-family: "Digital";
-        font-size: 12rem;
+        font-size: 14rem;
         transform: skewX(-10deg);
         -webkit-transform: skewX(-10deg);
         -moz-transform: skewX(-10deg);
@@ -285,7 +309,6 @@ body {
         @extend %btn;
         border: 1px solid $color4;
         padding: 1.2rem 1rem;
-
 
         margin-bottom: 3rem;
     }
@@ -357,7 +380,5 @@ body {
     position: fixed;
     bottom: 5vh;
     right: 1vw;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(-180deg);
+    @extend %vertical-text;
 }

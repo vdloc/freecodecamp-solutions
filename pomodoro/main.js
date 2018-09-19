@@ -21,9 +21,8 @@ window.addEventListener('load', () => {
             }
         }
     }
+
     let activeTrigger = true;
-
-
 
     let inputControls = () => {
         let decre_list = [input.controls.break.decre, input.controls.session.decre];
@@ -99,13 +98,14 @@ window.addEventListener('load', () => {
     }
     // timer countdown
     let phase = false; //false >> break, true  >> session
-    let phaseTrigger = false;
+    let phaseTrigger = false;    
+    let beep = document.querySelector('#beep');
     let current_second = (input.timer.second.textContent | 0);
     let current_minute = (input.timer.minute.textContent | 0);
-    let countdown = (state) => {
-
+    function countdown(state) {
+       
         if (state === 'play') {
-
+            // current_minute = (input.timer.minute.textContent | 0);
             if (current_minute && !current_second) {
                 current_minute -= 1;
                 setTimeout(function () {
@@ -130,28 +130,30 @@ window.addEventListener('load', () => {
                 input.timer.second.textContent = addZero(current_second);
                 input.timer.minute.textContent = addZero(current_minute);
 
-                if (!current_minute && !current_second) {
+                if (!current_minute) {
 
-                    if (phaseTrigger) {
-                        if (phase) {
-                            console.log(phase)
-                            countdown(0)
-                            timeControl('break')
+                    if (!current_second) {
+                       beep.setAttribute('autoplay',true)
+                        if (phaseTrigger) {
+                            if (phase) {
+                                console.log(phase)
+                                countdown(0)
+                                timeControl('break')
+                                phase = false;
+                                countdown('play')
 
-                            phase = false;
-                            countdown('play')
-
-                        } else {
-                            countdown(0)
-                            timeControl('session')
-                            console.log(phase)
-                            phase = true;
-                            countdown('play')
+                            } else {
+                                countdown(0)
+                                timeControl('session')
+                                phase = true;
+                                countdown('play')
+                            }
                         }
                     }
+
                 }
 
-            }, 100)
+            }, 50)
 
         } else {
             clearInterval(second)
@@ -159,16 +161,17 @@ window.addEventListener('load', () => {
     }
 
     function timeControl(phaseName) {
+        let label = document.querySelector('#timer-label');
         let sessionPhase = () => {
-            console.log('session')
             let sessionLength = input.controls.session.value.textContent;
             current_minute = addZero(sessionLength);
+            label.textContent = 'Session';
         }
         let breakPhase = () => {
-            console.log('break')
             let breakLength = input.controls.break.value.textContent;
-            console.log(breakLength)
             current_minute = addZero(breakLength);
+            label.textContent = "Break";
+
         }
         input.timer.second.textContent = '00';
         if (phaseName === 'session') {
@@ -186,7 +189,8 @@ window.addEventListener('load', () => {
 
         let playPause = (state) => {
             if (state) {
-                phaseTrigger = true; //start a break countdown when session countdown to zero              
+                phaseTrigger = true; //start a break countdown when session countdown to zero  
+                current_minute = (input.timer.minute.textContent | 0);    //force countdown take timer minute value        
                 countdown('play')
                 phase = true; //
                 play_pause_state = false; // make 
@@ -212,6 +216,8 @@ window.addEventListener('load', () => {
             phaseTrigger = false;
             current_second = (input.timer.second.textContent | 0);
             current_minute = (input.timer.minute.textContent | 0);
+            beep.pause()
+            beep.currentTime = 0;
             countdown(0)
             playPause(false)
 
