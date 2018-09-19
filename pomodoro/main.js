@@ -21,152 +21,202 @@ window.addEventListener('load', () => {
             }
         }
     }
+    let activeTrigger = true;
 
-    function m(obj) {
-        console.log(obj)
-    }
-    let inputControls = (state) => {
+
+
+    let inputControls = () => {
         let decre_list = [input.controls.break.decre, input.controls.session.decre];
         let incre_list = [input.controls.break.incre, input.controls.session.incre]
-        let session_list = [input.controls.session.incre, input.controls.session.decre]
 
         function decre() {
+
             let val = (this.previousElementSibling.textContent | 0);
-           
-            if (val > 1) {
-                val -= 1;
-                this.previousElementSibling.textContent = val;
-            }
-          
-            if (this.getAttribute('id').search('session') > -1) {
 
-                input.timer.second.textContent = '00';
-                input.timer.minute.textContent = val;
-
-                if (val < 10) {
-                    input.timer.minute.textContent = '0' + val;
+            if (activeTrigger) {
+                if (val > 1) {
+                    val -= 1;
+                    this.previousElementSibling.textContent = val;
                 }
 
+                if (this.getAttribute('id').search('session') > -1) {
 
+                    input.timer.second.textContent = '00';
+                    input.timer.minute.textContent = val;
+
+                    if (val < 10) {
+                        input.timer.minute.textContent = '0' + val;
+                    }
+
+                }
             }
+
         }
 
         function incre() {
+
             let val = (this.nextElementSibling.textContent | 0);
-         
-            if (val < 60) {
-                val += 1;
-                this.nextElementSibling.textContent = val;
-            }
-            if (this.getAttribute('id').search('session') > -1) {
 
-                input.timer.second.textContent = '00';
-                input.timer.minute.textContent = val;
-
-                if (val < 10) {
-                    input.timer.minute.textContent = '0' + val;
+            if (activeTrigger) {
+                if (val < 60) {
+                    val += 1;
+                    this.nextElementSibling.textContent = val;
                 }
+                if (this.getAttribute('id').search('session') > -1) {
 
+                    input.timer.second.textContent = '00';
+                    input.timer.minute.textContent = val;
+
+                    if (val < 10) {
+                        input.timer.minute.textContent = '0' + val;
+                    }
+
+                }
             }
+
         }
 
 
-        let active = () => {
+        function active() {
             for (let item in decre_list) {
-                decre_list[item].addEventListener('click', decre)
+                decre_list[item].addEventListener('click', decre, true)
 
             }
             for (let item in incre_list) {
-                incre_list[item].addEventListener('click', incre)
+                incre_list[item].addEventListener('click', incre, true)
             }
-        }
 
-        let deactive = () => {
-            for (let item in [input.controls.break.decre, input.controls.session.decre]) {
-                item.removeEventListener('click', decre)
-            }
-            for (let item in [input.controls.break.incre, input.controls.session.incre])
-                item.removeEventListener('click', incre)
         }
-
-        if (state) {
-            active()
-        } else {
-            deactive()
-        }
+        active();
     }
-    inputControls(1)
+    inputControls()
 
+    function addZero(val) {
+        if (val < 10) {
+            val = '0' + val;
+        }
+        return val;
+    }
     // timer countdown
-
+    let phase = false; //false >> break, true  >> session
+    let phaseTrigger = false;
+    let current_second = (input.timer.second.textContent | 0);
+    let current_minute = (input.timer.minute.textContent | 0);
     let countdown = (state) => {
 
         if (state === 'play') {
 
-            let current_second = (input.timer.second.textContent | 0);
-           
+            if (current_minute && !current_second) {
+                current_minute -= 1;
+                setTimeout(function () {
+                    input.timer.minute.textContent = addZero(current_minute);
+                }, 1000)
+            }
+            let minuteCount = 0;
             second = setInterval(() => {
 
                 if (current_second === 0) {
-                    current_second = 60;
-                }
-
-                current_second -= 1;
-
-                if (current_second < 10) {
-                    input.timer.second.textContent = '0' + current_second;
+                    current_second = 59;
                 } else {
-                    input.timer.second.textContent = current_second;
+                    current_second -= 1;
                 }
 
-            }, 1000)
+                minuteCount += 1;
 
-            minute = setInterval(() => {
+                if (minuteCount === 61) {
+                    current_minute -= 1;
+                    minuteCount = 0;
+                }
+                input.timer.second.textContent = addZero(current_second);
+                input.timer.minute.textContent = addZero(current_minute);
 
-                let current_minute = input.timer.minute.textContent;
+                if (!current_minute && !current_second) {
 
-                current_minute -= 1;
+                    if (phaseTrigger) {
+                        if (phase) {
+                            console.log(phase)
+                            countdown(0)
+                            timeControl('break')
 
-                input.timer.minute.textContent = (current_minute | 0) - 1;
+                            phase = false;
+                            countdown('play')
 
+                        } else {
+                            countdown(0)
+                            timeControl('session')
+                            console.log(phase)
+                            phase = true;
+                            countdown('play')
+                        }
+                    }
+                }
 
+            }, 100)
 
-            }, 60 * 1000)
         } else {
             clearInterval(second)
-            clearInterval(minute)
         }
     }
 
-    let controls = () => {
+    function timeControl(phaseName) {
+        let sessionPhase = () => {
+            console.log('session')
+            let sessionLength = input.controls.session.value.textContent;
+            current_minute = addZero(sessionLength);
+        }
+        let breakPhase = () => {
+            console.log('break')
+            let breakLength = input.controls.break.value.textContent;
+            console.log(breakLength)
+            current_minute = addZero(breakLength);
+        }
+        input.timer.second.textContent = '00';
+        if (phaseName === 'session') {
+            sessionPhase()
+        } else {
+            breakPhase()
+        }
+    }
+
+    function controls() {
         let play_pause = input.play_pause,
             reset = input.reset;
 
-        let play_pause_state = false;
+        let play_pause_state = true; //initial value make countdown run
 
-        play_pause.addEventListener('click', function () {
-
-            if (!play_pause_state) {
-
+        let playPause = (state) => {
+            if (state) {
+                phaseTrigger = true; //start a break countdown when session countdown to zero              
                 countdown('play')
-                play_pause_state = true;
-                inputControls(true)
+                phase = true; //
+                play_pause_state = false; // make 
+                activeTrigger = false;
 
             } else {
-                inputControls(false)
+                activeTrigger = true;
                 countdown('pause')
-                play_pause_state = false;
+                play_pause_state = true;
+                phaseTrigger = false;
             }
+        }
+
+        play_pause.addEventListener('click', function () {
+            playPause(play_pause_state)
+
         })
         reset.addEventListener('click', function (event) {
             input.timer.minute.textContent = '25';
             input.timer.second.textContent = '00';
             input.controls.session.value.textContent = '25';
+            phase = false; //false >> break, true  >> session
+            phaseTrigger = false;
+            current_second = (input.timer.second.textContent | 0);
+            current_minute = (input.timer.minute.textContent | 0);
+            countdown(0)
+            playPause(false)
 
         })
     }
     controls();
-    window.addEventListener('click', function (event) {
-        m(event.target)
-    })
+
 })
