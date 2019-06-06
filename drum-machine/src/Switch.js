@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 
-export default class App extends Component {
+export default class Switch extends Component {
   render() {
     return (
-      <div id="drum-machine">
-           
+      <div>
+        
       </div>
     )
   }
 }
-
