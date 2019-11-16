@@ -7,15 +7,19 @@ myApp.controller("mainController", [
   ($scope, WeatherAPI, GeolocationAPI) => {
     const getPositionPromise = GeolocationAPI.getCurrentPosition();
 
-    if (getPositionPromise) {
-      getPositionPromise.then(position => {
+    getPositionPromise
+      .then(position => {
         $scope.lat = position.lat;
         $scope.long = position.long;
 
-        return WeatherAPI.getCurrentPositionWeatherData(position);
-      }).then(weatherData => {
-          console.log(weatherData)
+        const getWeatherPromise = WeatherAPI.getCurrentPositionWeatherData(
+          position
+        );
+
+        return getWeatherPromise;
+      })
+      .then(weatherData => {
+        console.log(weatherData);
       });
-    }
   }
 ]);
