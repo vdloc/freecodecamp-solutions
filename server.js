@@ -1,38 +1,63 @@
-// server.js
-// where your node app starts
+"use strict";
 
-// init project
-var express = require('express');
+var express = require("express");
+var mongo = require("mongodb");
+var mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const dns = require("dns");
+const url = require("url");
+
+var cors = require("cors");
+
 var app = express();
 
-// enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
-// so that your API is remotely testable by FCC 
-var cors = require('cors');
-app.use(cors({optionSuccessStatus: 200}));  // some legacy browsers choke on 204
+// Basic Configuration
+var port = process.env.PORT || 3000;
 
-// http://expressjs.com/en/starter/static-files.html
-app.use(express.static('public'));
+/** this project needs a db !! **/
 
-// http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + '/views/index.html');
+// mongoose.connect(process.env.DB_URI);
+
+app.use(cors());
+
+/** this project needs to parse POST bodies **/
+// you should mount the body-parser here
+
+app.use("/public", express.static(process.cwd() + "/public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+const urls = [];
+
+app.get("/", function(req, res) {
+  res.sendFile(process.cwd() + "/views/index.html");
 });
 
-
-// your first API endpoint... 
-app.get("/api/whoami", function (req, res) {
-  const ipaddress = req.header('x-forwarded-for') || req.connection.remoteAccess;
-  const language = req.header('Accept-Language');
-  const software = req.header('User-Agent')
-  console.log(ipaddress, language, software)
-  res.json({
-    ipaddress, language, software
-  })
+app.post("/api/shorturl/new", (req, res) => {
+  const url = new URL(req.body.url);
+  dns.lookup(url.hostname, (err, address) => {
+    console.log(address);
+    if (err && err.code === "ENOTFOUND") {
+      res.json({
+        error: "invalid URL"
+      });
+    } else {
+      !urls.includes(url) && urls.push(url);
+      res.json({
+        original_url: url,
+        short_url: urls.findIndex(entry => entry === url)
+      });
+    }
+  });
 });
 
+// your first API endpoint...
+app.get("/api/shorturl/:shorten", function(req, res) {
+  const shorten = req.params.shorten;
+  
+  const originalURL = urls[Number(shorten)];
+  console.log(shorten, originalURL)
+  res.redirect(originalURL)
+});
 
-
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+app.listen(port, function() {
+  console.log("Node.js listening ...");
 });
