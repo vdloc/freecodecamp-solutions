@@ -1,63 +1,35 @@
-"use strict";
+'use strict';
 
-var express = require("express");
-var mongo = require("mongodb");
-var mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const dns = require("dns");
-const url = require("url");
+var express = require('express');
+var cors = require('cors');
+const multer = require("multer");
+const upload = multer({dest: 'uploads/'})
 
-var cors = require("cors");
+// require and use "multer"...
 
 var app = express();
 
-// Basic Configuration
-var port = process.env.PORT || 3000;
-
-/** this project needs a db !! **/
-
-// mongoose.connect(process.env.DB_URI);
-
 app.use(cors());
+app.use('/public', express.static(process.cwd() + '/public'));
 
-/** this project needs to parse POST bodies **/
-// you should mount the body-parser here
-
-app.use("/public", express.static(process.cwd() + "/public"));
-app.use(bodyParser.urlencoded({ extended: false }));
-const urls = [];
-
-app.get("/", function(req, res) {
-  res.sendFile(process.cwd() + "/views/index.html");
-});
-
-app.post("/api/shorturl/new", (req, res) => {
-  const url = new URL(req.body.url);
-  dns.lookup(url.hostname, (err, address) => {
-    console.log(address);
-    if (err && err.code === "ENOTFOUND") {
-      res.json({
-        error: "invalid URL"
-      });
-    } else {
-      !urls.includes(url) && urls.push(url);
-      res.json({
-        original_url: url,
-        short_url: urls.findIndex(entry => entry === url)
-      });
-    }
+app.get('/', function (req, res) {
+     res.sendFile(process.cwd() + '/views/index.html');
   });
+
+app.get('/hello', function(req, res){
+  res.json({greetings: "Hello, API"});
 });
 
-// your first API endpoint...
-app.get("/api/shorturl/:shorten", function(req, res) {
-  const shorten = req.params.shorten;
+app.post("/api/fileanalyse",upload.single('upfile'), (req, res) => {
+  const file = req.file;
   
-  const originalURL = urls[Number(shorten)];
-  console.log(shorten, originalURL)
-  res.redirect(originalURL)
-});
+  res.json({
+    name: file.originalname,
+    type: file.mimetype,
+    size: file.size
+  })
+})
 
-app.listen(port, function() {
-  console.log("Node.js listening ...");
+app.listen(process.env.PORT || 3000, function () {
+  console.log('Node.js listening ...');
 });
