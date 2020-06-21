@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="myApp">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Local Weather</title>
     <!-- Main stylesheet -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css" />
+    <script src="./libs/jquery/jquery.min.js"></script>
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
     <!-- Angular Js 1.7.x -->
     <script src="angular.min.js"></script>
     <!-- Main controller -->
@@ -15,11 +19,31 @@
     <script src="./services/weatherAPI.service.js"></script>
     <!-- Service.GeolocationAPI-->
     <script src="./services/geolocationAPI.service.js"></script>
-</head>
-<body ng-controller="mainController">
-    <h1>Local Weather</h1>
-    <p ng-bind="lat"></p>
-    <p ng-bind="long"></p>
-
-</body>
+    <!-- Service.PopupService -->
+    <script src="./services/popup.service.js"></script>
+    <!-- Component.WarningPopup -->
+    <script src="./components/warningPopup/warningPopup.component.js"></script>
+  </head>
+  <body ng-controller="mainController">
+    <div class="container">
+      <!-- Header -->
+      <header class="page-header">
+        <h1 class="display-5 font-weight-bold">
+          <small class="text-muted">A simple view of your</small>
+          Local Weather
+        </h1>
+      </header>
+      <!-- Main -->
+      <main class="main-content"></main>
+      <aside>
+        <warning-popup
+          warning-content="{{warningContent}}"
+          warning-title="{{warningTitle}}"
+          badge-class="{{badgeClass}}"
+          badge-content="{{badgeContent}}"
+        >
+        </warning-popup>
+      </aside>
+    </div>
+  </body>
 </html>

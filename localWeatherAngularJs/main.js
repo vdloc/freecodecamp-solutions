@@ -4,22 +4,20 @@ myApp.controller("mainController", [
   "$scope",
   "WeatherAPI",
   "GeolocationAPI",
-  ($scope, WeatherAPI, GeolocationAPI) => {
+  "PopupService",
+  ($scope, WeatherAPI, GeolocationAPI, PopupService) => {
+    PopupService.init($scope);
+
     const getPositionPromise = GeolocationAPI.getCurrentPosition();
 
     getPositionPromise
-      .then(position => {
-        $scope.lat = position.lat;
-        $scope.long = position.long;
+      .then((position) => {
+        if (!position) return; 
 
-        const getWeatherPromise = WeatherAPI.getCurrentPositionWeatherData(
-          position
-        );
-
-        return getWeatherPromise;
+        return WeatherAPI.getCurrentPositionWeatherData(position);
       })
-      .then(weatherData => {
+      .then((weatherData) => {
         console.log(weatherData);
       });
-  }
+  },
 ]);
