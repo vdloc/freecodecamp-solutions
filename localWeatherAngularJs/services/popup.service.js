@@ -36,7 +36,6 @@ myApp.factory("PopupService", [
       _scope.warningContent = warningContent;
       _scope.warningTitle = warningTitle;
       _scope.badgeContent = badgeContent;
-      console.log("_scope.badgeContent", _scope.badgeContent);
       _scope.badgeClass = isWarning
         ? BADGE_CLASS.WARNING
         : isError

@@ -12,12 +12,14 @@ myApp.controller("mainController", [
 
     getPositionPromise
       .then((position) => {
-        if (!position) return; 
+        if (!position) return;
 
         return WeatherAPI.getCurrentPositionWeatherData(position);
       })
       .then((weatherData) => {
-        console.log(weatherData);
+        if (weatherData) {
+          $scope.weather = weatherData;
+        }
       });
   },
 ]);

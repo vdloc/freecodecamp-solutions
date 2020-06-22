@@ -21,8 +21,14 @@
     <script src="./services/geolocationAPI.service.js"></script>
     <!-- Service.PopupService -->
     <script src="./services/popup.service.js"></script>
+    <!-- Service.UnitConverter -->
+    <script src="./services/unitConverter.service.js"></script>
     <!-- Component.WarningPopup -->
     <script src="./components/warningPopup/warningPopup.component.js"></script>
+    <!-- Component.Card -->
+    <script src="./components/card/card.component.js"></script>
+    <!-- Component.Jumbotron -->
+    <script src="./components/jumnotron/jumbotron.component.js"></script>
   </head>
   <body ng-controller="mainController">
     <div class="container">
@@ -34,7 +40,9 @@
         </h1>
       </header>
       <!-- Main -->
-      <main class="main-content"></main>
+      <main class="main-content">
+        <jumbotron weather="weather"></jumbotron>
+      </main>
       <aside>
         <warning-popup
           warning-content="{{warningContent}}"

@@ -1,4 +1,4 @@
-myApp.component("Coordinate", {
+myApp.component("coordinate", {
   templateUrl: "./components/coordinate/coordinate.template.html",
   bindings: {
     lat: "@",
