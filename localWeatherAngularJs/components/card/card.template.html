@@ -13,7 +13,9 @@
       ng-repeat="item in $ctrl.cardItems"
     >
       {{ item.name }}
-      <span class="badge badge-warning badge-pill">{{item.value}}</span>
+      <span class="badge badge-{{ $ctrl.badgeColor }} badge-pill"
+        >{{item.value}}</span
+      >
     </li>
   </ul>
 </div>

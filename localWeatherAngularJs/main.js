@@ -19,6 +19,7 @@ myApp.controller("mainController", [
       .then((weatherData) => {
         if (weatherData) {
           $scope.weather = weatherData;
+          console.log("weatherData", weatherData);
         }
       });
   },

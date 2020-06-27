@@ -10,9 +10,12 @@ myApp.factory("UnitConverterService", [
     });
 
     const getTimeZoneHour = (timeZoneMilis) =>
-      `${timeZoneMilis > 0 ? "+" : "-"}${timeZoneMilis / (60 * 60)}:00`;
-    const kelvinToCelsius = (kelvinDeg) => kelvinDeg - 273.15;
-    const kelvinToFarenheit = (kelvinDeg) => (kelvinDeg * 9) / 5 - 459.67;
+      `GMT ${timeZoneMilis > 0 ? "+" : "-"}${timeZoneMilis / (60 * 60)}:00`;
+    const kelvinToCelsius = (kelvinDeg) =>
+      `${(kelvinDeg - 273.15).toFixed(1)}°C`;
+    const kelvinToFarenheit = (kelvinDeg) =>
+      `${((kelvinDeg * 9) / 5 - 459.67).toFixed(1)}°F`;
+    const displayKelvinUnit = (kelvinDeg) => `${kelvinDeg}°K`;
     const getLocaleTimeString = (timeStamp) =>
       new Date(timeStamp).toLocaleTimeString();
     const meterToKilometers = (meters) => meters / 1000;
@@ -31,6 +34,7 @@ myApp.factory("UnitConverterService", [
       getTimeZoneHour,
       kelvinToCelsius,
       kelvinToFarenheit,
+      displayKelvinUnit,
       getLocaleTimeString,
       meterToKilometers,
       getCountryName,

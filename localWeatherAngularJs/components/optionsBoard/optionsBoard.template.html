@@ -1,0 +1,56 @@
+<div class="card options-board">
+  <div class="card-body border-bottom">
+    <h5 class="card-title">Options</h5>
+  </div>
+  <!-- Temperature -->
+  <div class="temperature-unit mb-2">
+    <header class="option-header mt-3 ml-2 font-weight-bold">
+      <h6>Temperature Units</h6>
+    </header>
+    <!-- Body options -->
+    <div class="row p-2 text-center">
+      <!-- Celsius -->
+      <div class="col-md-4">
+        <div class="input-group d-flex justify-content-center">
+          <label for="Celsius">Celsius</label>
+          <input
+            type="radio"
+            name="temperatureUnit"
+            id="Celsius"
+            value="Celsius"
+            ng-model="$ctrl.temperatureUnit"
+            ng-change="$ctrl.updateTemperatureUnit($ctrl.temperatureUnit)"
+          />
+        </div>
+      </div>
+      <!-- Fahrenheit -->
+      <div class="col-md-4">
+        <div class="input-group d-flex justify-content-center">
+          <label for="Fahrenheit">Fahrenheit</label>
+          <input
+            type="radio"
+            name="temperatureUnit"
+            id="Fahrenheit"
+            value="Fahrenheit"
+            ng-model="$ctrl.temperatureUnit"
+            ng-change="$ctrl.updateTemperatureUnit($ctrl.temperatureUnit)"
+          />
+        </div>
+      </div>
+      <!-- Kelvin -->
+      <div class="col-md-4">
+        <div class="input-group d-flex justify-content-center">
+          <label for="Kelvin">Kelvin</label>
+          <input
+            type="radio"
+            name="temperatureUnit"
+            id="Kelvin"
+            value="Kelvin"
+            ng-model="$ctrl.temperatureUnit"
+            ng-change="$ctrl.updateTemperatureUnit($ctrl.temperatureUnit)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

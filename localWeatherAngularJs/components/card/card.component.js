@@ -3,5 +3,6 @@ myApp.component("card", {
   bindings: {
     cardTitle: "@",
     cardItems: "<",
+    badgeColor: "@",
   },
 });
