@@ -6,6 +6,7 @@ import { select, Selection } from 'd3-selection';
 export default class Chart implements ChartParams {
   dataset: Dataset | null;
   title: string;
+  description: string | null;
   margin: { top: number; right: number; bottom: number; left: number };
   xAxis: Axis<number> | null;
   yAxis: Axis<number> | null;
@@ -29,6 +30,7 @@ export default class Chart implements ChartParams {
     this.chartElement = chartElement;
     this.width = width;
     this.height = height;
+    this.description = null;
   }
 
   async init() {
@@ -49,9 +51,31 @@ export default class Chart implements ChartParams {
       .attr('id', 'title')
       .attr('text-anchor', 'middle')
       .style('font-size', '24px');
+    this.svg
+      ?.append('text')
+      .text(this.getDescription())
+      .attr('x', this.width / 2)
+      .attr('y', this.margin.top * 3)
+      .attr('id', 'description')
+      .attr('text-anchor', 'middle')
+      .style('font-size', '20px');
   }
 
   createAxes() {}
+
+  getDescription() {
+    const baseTemperature = this.dataset?.baseTemperature;
+    const minYear = this.dataset?.monthlyVariance.reduce(
+      (acc, curr) => Math.min(acc, curr.year),
+      Infinity
+    );
+    const maxYear = this.dataset?.monthlyVariance.reduce(
+      (acc, curr) => Math.max(acc, curr.year),
+      -Infinity
+    );
+
+    return `${minYear} - ${maxYear}: base temperature ${baseTemperature}°C`;
+  }
 
   async getDataset(): Promise<Dataset> {
     const response = await fetch(this.jsonUrl);
