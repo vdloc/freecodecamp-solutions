@@ -1,6 +1,6 @@
 import { extent, format } from 'd3';
 import { Dataset, ChartParams, MonthlyVariance } from './types';
-import { Axis, axisBottom } from 'd3-axis';
+import { Axis, axisBottom, axisLeft } from 'd3-axis';
 import {
   NumberValue,
   scaleLinear,
@@ -76,13 +76,29 @@ export default class Chart implements ChartParams {
         return d.year;
       }
     ) as [unknown, unknown] as [number, number];
-
+    const [yMin, yMax] = extent(
+      this.dataset?.monthlyVariance || [],
+      (d: MonthlyVariance) => {
+        return d.month;
+      }
+    ) as [unknown, unknown] as [number, number];
     this.xScale = scaleLinear()
       .domain([xRange[0] - 10, xRange[1]])
       .range([this.margin.left, this.width - this.margin.right]);
+    this.yScale = scaleLinear()
+      .domain([yMax + 0.5, yMin - 0.5])
+      .range([this.height - this.margin.bottom, this.margin.top]);
     this.xAxis = axisBottom(this.xScale).tickFormat((d: NumberValue) => {
       return d.toString();
     });
+    this.yAxis = axisLeft(this.yScale).tickFormat(
+      (monthNumber: NumberValue) => {
+        const monthNames = new Intl.DateTimeFormat('en-US', { month: 'long' });
+        const date = new Date(2025, Number(monthNumber) - 1, 1);
+
+        return monthNames.format(date);
+      }
+    );
 
     this.svg
       ?.append('g')
@@ -92,6 +108,15 @@ export default class Chart implements ChartParams {
         'transform',
         `translate(${0}, ${this.height - this.margin.bottom})`
       );
+    this.svg
+      ?.append('g')
+      .attr('id', 'x-axis')
+      .call(this.yAxis)
+      .attr('transform', `translate(${this.margin.left}, ${0})`);
+  }
+
+  createPlots() {
+    
   }
 
   getDescription() {
