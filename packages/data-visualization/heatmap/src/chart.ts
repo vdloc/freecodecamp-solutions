@@ -82,15 +82,19 @@ export default class Chart implements ChartParams {
         return d.month;
       }
     ) as [unknown, unknown] as [number, number];
+    const xTicks = this.createYearTicks(xRange, 10);
+
     this.xScale = scaleLinear()
-      .domain([xRange[0] - 10, xRange[1]])
+      .domain([xRange[0], xRange[1]])
       .range([this.margin.left, this.width - this.margin.right]);
     this.yScale = scaleLinear()
       .domain([yMax + 0.5, yMin - 0.5])
       .range([this.height - this.margin.bottom, this.margin.top]);
-    this.xAxis = axisBottom(this.xScale).tickFormat((d: NumberValue) => {
-      return d.toString();
-    });
+    this.xAxis = axisBottom(this.xScale)
+      .tickFormat((d: NumberValue) => {
+        return d.toString();
+      })
+      .tickValues(xTicks);
     this.yAxis = axisLeft(this.yScale).tickFormat(
       (monthNumber: NumberValue) => {
         const monthNames = new Intl.DateTimeFormat('en-US', { month: 'long' });
@@ -115,8 +119,18 @@ export default class Chart implements ChartParams {
       .attr('transform', `translate(${this.margin.left}, ${0})`);
   }
 
-  createPlots() {
-    
+  createPlots() {}
+
+  createYearTicks([min, max]: [number, number], stepSize: number) {
+    const ticks = [];
+    let tick = min;
+    while (tick <= max) {
+      if (tick % stepSize === 0) {
+        ticks.push(tick);
+      }
+      tick++;
+    }
+    return ticks;
   }
 
   getDescription() {
