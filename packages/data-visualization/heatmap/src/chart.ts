@@ -48,6 +48,7 @@ export default class Chart implements ChartParams {
       .attr('height', this.height);
     this.createTitles();
     this.createAxes();
+    this.createPlots();
   }
 
   createTitles() {
@@ -119,7 +120,20 @@ export default class Chart implements ChartParams {
       .attr('transform', `translate(${this.margin.left}, ${0})`);
   }
 
-  createPlots() {}
+  createPlots() {
+    this.svg
+      ?.selectAll('rect')
+      .data(this.dataset?.monthlyVariance || [])
+      .enter()
+      .append('rect')
+      .attr('class', 'cell')
+      .attr('x', (d: MonthlyVariance) => {
+        return this.xScale ? this.xScale(d.year) : d.year;
+      })
+      .attr('y', (d: MonthlyVariance) => {
+        return this.yScale ? this.yScale(d.month) : d.month;
+      });
+  }
 
   createYearTicks([min, max]: [number, number], stepSize: number) {
     const ticks = [];
