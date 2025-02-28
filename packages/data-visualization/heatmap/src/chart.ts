@@ -1,6 +1,13 @@
-import { Dataset, ChartParams } from './types';
-import { Axis } from 'd3-axis';
-import { ScaleLinear } from 'd3-scale';
+import { extent, format } from 'd3';
+import { Dataset, ChartParams, MonthlyVariance } from './types';
+import { Axis, axisBottom } from 'd3-axis';
+import {
+  NumberValue,
+  scaleLinear,
+  ScaleLinear,
+  ScaleTime,
+  scaleTime,
+} from 'd3-scale';
 import { select, Selection } from 'd3-selection';
 
 export default class Chart implements ChartParams {
@@ -8,8 +15,8 @@ export default class Chart implements ChartParams {
   title: string;
   description: string | null;
   margin: { top: number; right: number; bottom: number; left: number };
-  xAxis: Axis<number> | null;
-  yAxis: Axis<number> | null;
+  xAxis: Axis<NumberValue> | null;
+  yAxis: Axis<NumberValue> | null;
   xScale: ScaleLinear<number, number> | null;
   yScale: ScaleLinear<number, number> | null;
   svg: Selection<SVGSVGElement, unknown, null, any> | null;
@@ -40,6 +47,7 @@ export default class Chart implements ChartParams {
       .attr('width', this.width)
       .attr('height', this.height);
     this.createTitles();
+    this.createAxes();
   }
 
   createTitles() {
@@ -61,7 +69,30 @@ export default class Chart implements ChartParams {
       .style('font-size', '20px');
   }
 
-  createAxes() {}
+  createAxes() {
+    const xRange = extent(
+      this.dataset?.monthlyVariance || [],
+      (d: MonthlyVariance) => {
+        return d.year;
+      }
+    ) as [unknown, unknown] as [number, number];
+
+    this.xScale = scaleLinear()
+      .domain([xRange[0] - 10, xRange[1]])
+      .range([this.margin.left, this.width - this.margin.right]);
+    this.xAxis = axisBottom(this.xScale).tickFormat((d: NumberValue) => {
+      return d.toString();
+    });
+
+    this.svg
+      ?.append('g')
+      .attr('id', 'y-axis')
+      .call(this.xAxis)
+      .attr(
+        'transform',
+        `translate(${0}, ${this.height - this.margin.bottom})`
+      );
+  }
 
   getDescription() {
     const baseTemperature = this.dataset?.baseTemperature;
