@@ -96,13 +96,8 @@ export default class Chart implements ChartParams {
         return d.toString();
       })
       .tickValues(xTicks);
-    this.yAxis = axisLeft(this.yScale).tickFormat(
-      (monthNumber: NumberValue) => {
-        const monthNames = new Intl.DateTimeFormat('en-US', { month: 'long' });
-        const date = new Date(2025, Number(monthNumber) - 1, 1);
-
-        return monthNames.format(date);
-      }
+    this.yAxis = axisLeft(this.yScale).tickFormat((monthNumber: NumberValue) =>
+      this.getMonthName(monthNumber)
     );
 
     this.svg
@@ -121,6 +116,8 @@ export default class Chart implements ChartParams {
   }
 
   createPlots() {
+    let yAxisTicksDistance = this.getYAxisTicksDistance();
+    let xAxisTicksDistance = this.getXAxisTicksDistance();
     this.svg
       ?.selectAll('rect')
       .data(this.dataset?.monthlyVariance || [])
@@ -132,7 +129,16 @@ export default class Chart implements ChartParams {
       })
       .attr('y', (d: MonthlyVariance) => {
         return this.yScale ? this.yScale(d.month) : d.month;
-      });
+      })
+      .attr('width', xAxisTicksDistance / 10)
+      .attr('height', yAxisTicksDistance)
+      .attr('data-month', (d: MonthlyVariance) => d.month)
+      .attr('data-month-name', (d: MonthlyVariance) =>
+        this.getMonthName(d.month)
+      )
+      .attr('data-year', (d: MonthlyVariance) => d.year)
+      .attr('data-temp', (d: MonthlyVariance) => d.variance)
+      .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`);
   }
 
   createYearTicks([min, max]: [number, number], stepSize: number) {
@@ -147,6 +153,22 @@ export default class Chart implements ChartParams {
     return ticks;
   }
 
+  getYAxisTicksDistance() {
+    let ticks = this.yScale?.ticks();
+    if (this.yScale && ticks && ticks.length > 1) {
+      return Math.abs(this.yScale(ticks?.[1]) - this.yScale(ticks?.[0]));
+    }
+    return 0;
+  }
+
+  getXAxisTicksDistance() {
+    let ticks = this.xScale?.ticks();
+    if (this.xScale && ticks && ticks.length > 1) {
+      return Math.abs(this.xScale(ticks?.[1]) - this.xScale(ticks?.[0]));
+    }
+    return 0;
+  }
+
   getDescription() {
     const baseTemperature = this.dataset?.baseTemperature;
     const minYear = this.dataset?.monthlyVariance.reduce(
@@ -159,6 +181,12 @@ export default class Chart implements ChartParams {
     );
 
     return `${minYear} - ${maxYear}: base temperature ${baseTemperature}°C`;
+  }
+
+  getMonthName(monthNumber: NumberValue) {
+    const monthNames = new Intl.DateTimeFormat('en-US', { month: 'long' });
+    const date = new Date(2025, Number(monthNumber) - 1, 1);
+    return monthNames.format(date);
   }
 
   async getDataset(): Promise<Dataset> {
