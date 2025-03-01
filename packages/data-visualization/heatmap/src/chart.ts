@@ -1,12 +1,12 @@
-import { extent, format } from 'd3';
+import { extent, format, interpolateHcl } from 'd3';
 import { Dataset, ChartParams, MonthlyVariance } from './types';
 import { Axis, axisBottom, axisLeft } from 'd3-axis';
 import {
   NumberValue,
   scaleLinear,
   ScaleLinear,
-  ScaleTime,
-  scaleTime,
+  ScaleSequential,
+  scaleSequential,
 } from 'd3-scale';
 import { select, Selection } from 'd3-selection';
 
@@ -19,6 +19,7 @@ export default class Chart implements ChartParams {
   yAxis: Axis<NumberValue> | null;
   xScale: ScaleLinear<number, number> | null;
   yScale: ScaleLinear<number, number> | null;
+  colorScale: ScaleSequential<string> | null;
   svg: Selection<SVGSVGElement, unknown, null, any> | null;
   width: number;
   height: number;
@@ -31,6 +32,7 @@ export default class Chart implements ChartParams {
     this.yAxis = null;
     this.xScale = null;
     this.yScale = null;
+    this.colorScale = null;
     this.svg = null;
     this.title = title;
     this.margin = margin;
@@ -83,6 +85,13 @@ export default class Chart implements ChartParams {
         return d.month;
       }
     ) as [unknown, unknown] as [number, number];
+    const varianceRange = extent(
+      this.dataset?.monthlyVariance || [],
+      (d: MonthlyVariance) => {
+        return (this.dataset?.baseTemperature || 0) + d.variance;
+      }
+    ) as [unknown, unknown] as [number, number];
+    console.log(' varianceRange:', varianceRange);
     const xTicks = this.createYearTicks(xRange, 10);
 
     this.xScale = scaleLinear()
@@ -91,6 +100,9 @@ export default class Chart implements ChartParams {
     this.yScale = scaleLinear()
       .domain([yMax + 0.5, yMin - 0.5])
       .range([this.height - this.margin.bottom, this.margin.top]);
+    this.colorScale = scaleSequential()
+      .domain(varianceRange)
+      .interpolator(interpolateHcl('#0571b0', '#67001f'));
     this.xAxis = axisBottom(this.xScale)
       .tickFormat((d: NumberValue) => {
         return d.toString();
@@ -132,13 +144,18 @@ export default class Chart implements ChartParams {
       })
       .attr('width', xAxisTicksDistance / 10)
       .attr('height', yAxisTicksDistance)
-      .attr('data-month', (d: MonthlyVariance) => d.month)
+      .attr('data-month', (d: MonthlyVariance) => d.month - 1)
       .attr('data-month-name', (d: MonthlyVariance) =>
         this.getMonthName(d.month)
       )
       .attr('data-year', (d: MonthlyVariance) => d.year)
-      .attr('data-temp', (d: MonthlyVariance) => d.variance)
-      .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`);
+      .attr('data-temp', (d: MonthlyVariance) => {
+        return (this.dataset?.baseTemperature || 0) + d.variance;
+      })
+      .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`)
+      .attr('fill', (d: MonthlyVariance) => {
+        return this.colorScale ? this.colorScale(d.variance) : d.variance;
+      });
   }
 
   createYearTicks([min, max]: [number, number], stepSize: number) {
