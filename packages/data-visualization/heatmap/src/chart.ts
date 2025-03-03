@@ -19,7 +19,7 @@ export default class Chart implements ChartParams {
   yAxis: Axis<NumberValue> | null;
   xScale: ScaleLinear<number, number> | null;
   yScale: ScaleLinear<number, number> | null;
-  colorScale: ScaleSequential<string> | null;
+  temperatureRange: [number | undefined, number | undefined];
   svg: Selection<SVGSVGElement, unknown, null, any> | null;
   width: number;
   height: number;
@@ -32,7 +32,7 @@ export default class Chart implements ChartParams {
     this.yAxis = null;
     this.xScale = null;
     this.yScale = null;
-    this.colorScale = null;
+    this.temperatureRange = [0, 0];
     this.svg = null;
     this.title = title;
     this.margin = margin;
@@ -58,7 +58,7 @@ export default class Chart implements ChartParams {
       ?.append('text')
       .text(this.title)
       .attr('x', this.width / 2)
-      .attr('y', this.margin.top)
+      .attr('y', this.margin.top / 3)
       .attr('id', 'title')
       .attr('text-anchor', 'middle')
       .style('font-size', '24px');
@@ -66,7 +66,7 @@ export default class Chart implements ChartParams {
       ?.append('text')
       .text(this.getDescription())
       .attr('x', this.width / 2)
-      .attr('y', this.margin.top * 3)
+      .attr('y', this.margin.top / 1.3)
       .attr('id', 'description')
       .attr('text-anchor', 'middle')
       .style('font-size', '20px');
@@ -85,13 +85,7 @@ export default class Chart implements ChartParams {
         return d.month;
       }
     ) as [unknown, unknown] as [number, number];
-    const varianceRange = extent(
-      this.dataset?.monthlyVariance || [],
-      (d: MonthlyVariance) => {
-        return (this.dataset?.baseTemperature || 0) + d.variance;
-      }
-    ) as [unknown, unknown] as [number, number];
-    console.log(' varianceRange:', varianceRange);
+
     const xTicks = this.createYearTicks(xRange, 10);
 
     this.xScale = scaleLinear()
@@ -100,9 +94,12 @@ export default class Chart implements ChartParams {
     this.yScale = scaleLinear()
       .domain([yMax + 0.5, yMin - 0.5])
       .range([this.height - this.margin.bottom, this.margin.top]);
-    this.colorScale = scaleSequential()
-      .domain(varianceRange)
-      .interpolator(interpolateHcl('#0571b0', '#67001f'));
+    this.temperatureRange = extent(
+      this.dataset?.monthlyVariance || [],
+      (d: MonthlyVariance) => {
+        return (this.dataset?.baseTemperature || 0) + d.variance;
+      }
+    );
     this.xAxis = axisBottom(this.xScale)
       .tickFormat((d: NumberValue) => {
         return d.toString();
@@ -154,7 +151,8 @@ export default class Chart implements ChartParams {
       })
       .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`)
       .attr('fill', (d: MonthlyVariance) => {
-        return this.colorScale ? this.colorScale(d.variance) : d.variance;
+        let temperature = (this.dataset?.baseTemperature || 0) + d.variance;
+        return this.getCellColor(temperature);
       });
   }
 
@@ -210,5 +208,9 @@ export default class Chart implements ChartParams {
     const response = await fetch(this.jsonUrl);
     const data = await response.json();
     return data;
+  }
+
+  getCellColor(temperature: NumberValue) {
+    return '';
   }
 }

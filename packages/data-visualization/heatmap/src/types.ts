@@ -16,3 +16,15 @@ export type ChartParams = {
   margin: { top: number; right: number; bottom: number; left: number };
   chartElement: HTMLElement;
 };
+
+export enum ChartColor {
+  DeepOceanBlue = '#1A2F4D',
+  MidnightTeal = '#2A4C5E',
+  SlateIndigo = '#3B5C7A',
+  DuskPurple = '#4C5777',
+  PlumShadow = '#6B4E71',
+  WineBerry = '#883C5F',
+  CrimsonDusk = '#9B2D4A',
+  RubyGlow = '#B71C3A',
+  VelvetRed = '#A0122F',
+}
