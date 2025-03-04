@@ -1,13 +1,7 @@
-import { extent, format, interpolateHcl } from 'd3';
+import { extent } from 'd3';
 import { Dataset, ChartParams, MonthlyVariance, ChartColor } from './types';
 import { Axis, axisBottom, axisLeft } from 'd3-axis';
-import {
-  NumberValue,
-  scaleLinear,
-  ScaleLinear,
-  ScaleSequential,
-  scaleSequential,
-} from 'd3-scale';
+import { NumberValue, scaleLinear, ScaleLinear } from 'd3-scale';
 import { select, Selection } from 'd3-selection';
 
 // Chart class implementing ChartParams interface for creating a temperature variance visualization
