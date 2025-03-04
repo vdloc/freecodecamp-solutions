@@ -1,5 +1,5 @@
 import { extent, format, interpolateHcl } from 'd3';
-import { Dataset, ChartParams, MonthlyVariance } from './types';
+import { Dataset, ChartParams, MonthlyVariance, ChartColor } from './types';
 import { Axis, axisBottom, axisLeft } from 'd3-axis';
 import {
   NumberValue,
@@ -19,7 +19,7 @@ export default class Chart implements ChartParams {
   yAxis: Axis<NumberValue> | null;
   xScale: ScaleLinear<number, number> | null;
   yScale: ScaleLinear<number, number> | null;
-  temperatureRange: [number | undefined, number | undefined];
+  temperatureRange: [number, number];
   svg: Selection<SVGSVGElement, unknown, null, any> | null;
   width: number;
   height: number;
@@ -94,12 +94,17 @@ export default class Chart implements ChartParams {
     this.yScale = scaleLinear()
       .domain([yMax + 0.5, yMin - 0.5])
       .range([this.height - this.margin.bottom, this.margin.top]);
-    this.temperatureRange = extent(
-      this.dataset?.monthlyVariance || [],
+    const partialExtent = extent(
+      this.dataset?.monthlyVariance ?? [],
       (d: MonthlyVariance) => {
         return (this.dataset?.baseTemperature || 0) + d.variance;
       }
     );
+    this.temperatureRange = [
+      partialExtent[0] ?? 0, // Default min value
+      partialExtent[1] ?? 0, // Default max value
+    ];
+
     this.xAxis = axisBottom(this.xScale)
       .tickFormat((d: NumberValue) => {
         return d.toString();
@@ -210,7 +215,42 @@ export default class Chart implements ChartParams {
     return data;
   }
 
-  getCellColor(temperature: NumberValue) {
-    return '';
+  getCellColor(temperature: number) {
+    const colorsData = this.getTemparatureColors();
+
+    for (const colorName in colorsData) {
+      if (
+        temperature >= colorsData[colorName].start &&
+        temperature < colorsData[colorName].end
+      ) {
+        return colorsData[colorName].color;
+      }
+    }
+
+    return ChartColor.VelvetRed; // Default color if no match found
+  }
+
+  getTemparatureColors() {
+    const colors = Object.entries(ChartColor);
+    const colorsCount = colors.length;
+    const temperatureStep =
+      (this.temperatureRange[1] - this.temperatureRange[0]) / colorsCount;
+    interface ColorDataEntry {
+      color: string;
+      start: number;
+      end: number;
+    }
+
+    return colors.reduce<Record<string, ColorDataEntry>>(
+      (colorsData, [colorName, colorValue], index) => {
+        colorsData[colorName] = {
+          color: colorValue,
+          start: this.temperatureRange[0] + index * temperatureStep,
+          end: this.temperatureRange[0] + (index + 1) * temperatureStep,
+        };
+        return colorsData;
+      },
+      {}
+    );
   }
 }
