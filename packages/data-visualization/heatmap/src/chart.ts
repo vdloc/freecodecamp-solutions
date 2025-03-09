@@ -1,4 +1,4 @@
-import { extent } from 'd3';
+import { extent, pointer } from 'd3';
 import { Dataset, ChartParams, MonthlyVariance, ChartColor } from './types';
 import { Axis, axisBottom, axisLeft } from 'd3-axis';
 import { NumberValue, scaleLinear, ScaleLinear } from 'd3-scale';
@@ -108,9 +108,7 @@ export default class Chart implements ChartParams {
     // Calculate temperature range for color scaling
     const partialExtent = extent(
       this.dataset?.monthlyVariance ?? [],
-      (d: MonthlyVariance) => {
-        return (this.dataset?.baseTemperature || 0) + d.variance;
-      }
+      (d: MonthlyVariance) => this.getTempratureFromVariance(d.variance)
     );
     this.temperatureRange = [partialExtent[0] ?? 0, partialExtent[1] ?? 0];
 
@@ -148,6 +146,7 @@ export default class Chart implements ChartParams {
   createPlots() {
     let yAxisTicksDistance = this.getYAxisTicksDistance();
     let xAxisTicksDistance = this.getXAxisTicksDistance();
+    let tooltip = select('#tooltip');
 
     // Bind data to rectangles and set their properties
     this.svg
@@ -169,13 +168,44 @@ export default class Chart implements ChartParams {
         this.getMonthName(d.month)
       )
       .attr('data-year', (d: MonthlyVariance) => d.year)
-      .attr('data-temp', (d: MonthlyVariance) => {
-        return (this.dataset?.baseTemperature || 0) + d.variance;
-      })
+      .attr('data-temp', (d: MonthlyVariance) =>
+        this.getTempratureFromVariance(d.variance)
+      )
       .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`)
       .attr('fill', (d: MonthlyVariance) => {
-        let temperature = (this.dataset?.baseTemperature || 0) + d.variance;
+        let temperature = this.getTempratureFromVariance(d.variance);
         return this.getCellColor(temperature);
+      })
+      .on('mouseover', (event: MouseEvent, d: MonthlyVariance) => {
+        let offsetX = this.xScale ? this.xScale(d.year) : d.year;        
+        let offsetY = this.yScale ? this.yScale(d.month) : d.month;
+        let target = event.target as SVGRectElement;
+
+        select(target).attr('stroke', 'black').attr('stroke-width', 1);
+
+        tooltip
+          .style('opacity', 1)
+          .style('visibility', 'visible')
+          .style('left', `${offsetX - 40}px`)
+          .style('top', `${offsetY - 10}px`)
+          .html(
+            `
+            <span>${d.year} ${this.getMonthName(d.month)}</span>
+            <br>
+            <span>${this.getTempratureFromVariance(d.variance).toFixed(
+              2
+            )}&deg;C</span>
+            <br>
+            <span>${d.variance}&deg;C</span>                       
+          `
+          )
+          .style('text-align', 'center');
+      })
+      .on('mouseout', (event) => {
+        let target = event.target as SVGRectElement;
+
+        select(target).attr('stroke', 'none').attr('stroke-width', 1);
+        tooltip.style('opacity', 0).style('visibility', 'hidden');
       });
   }
 
@@ -278,5 +308,9 @@ export default class Chart implements ChartParams {
       },
       {}
     );
+  }
+
+  getTempratureFromVariance(variance: number) {
+    return Number((this.dataset?.baseTemperature || 0) + variance);
   }
 }
