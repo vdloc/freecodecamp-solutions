@@ -1,6 +1,6 @@
 import { select, Selection } from 'd3-selection';
 
-export type TooltipDisplayParams = {
+export type ShowParams = {
   offsetX: number;
   offsetY: number;
   year: number;
@@ -22,14 +22,7 @@ export default class ChartTooltip {
     this.selection = select(this.element);
   }
 
-  display({
-    offsetX,
-    offsetY,
-    year,
-    month,
-    temp,
-    variance,
-  }: TooltipDisplayParams): void {
+  show({ offsetX, offsetY, year, month, temp, variance }: ShowParams): void {
     this.selection
       .style('display', 'block')
       .style('opacity', 1)
