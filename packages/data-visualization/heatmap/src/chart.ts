@@ -1,78 +1,79 @@
 import { extent, pointer } from 'd3';
-import { Dataset, ChartParams, MonthlyVariance, ChartColor } from './types';
+import {
+  Dataset,
+  ChartParams,
+  MonthlyVariance,
+  ChartColor,
+  SVGSelection,
+} from './types';
 import { Axis, axisBottom, axisLeft } from 'd3-axis';
 import { NumberValue, scaleLinear, ScaleLinear } from 'd3-scale';
 import { select, Selection } from 'd3-selection';
+import ChartTooltip from './components/tooltip';
+import ChartTitle from './components/title';
 
 // Chart class implementing ChartParams interface for creating a temperature variance visualization
-export default class Chart implements ChartParams {
+export default class Chart {
   dataset: Dataset | null;
   title: string;
-  description: string | null;
+  chartTitle: ChartTitle;
   margin: { top: number; right: number; bottom: number; left: number };
   xAxis: Axis<NumberValue> | null;
   yAxis: Axis<NumberValue> | null;
   xScale: ScaleLinear<number, number> | null;
   yScale: ScaleLinear<number, number> | null;
   temperatureRange: [number, number];
-  svg: Selection<SVGSVGElement, unknown, null, any> | null;
+  svg: SVGSelection;
   width: number;
   height: number;
   chartElement: HTMLElement;
+  tooltipElement: HTMLElement;
+  tooltip: Tooltip;
   // URL containing global temperature data in JSON format
   jsonUrl =
     'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json';
 
-  constructor({ title, margin, width, height, chartElement }: ChartParams) {
+  constructor({
+    title,
+    margin,
+    width,
+    height,
+    chartElement,
+    tooltipElement,
+  }: ChartParams) {
+    this.title = title;
     this.dataset = null;
     this.xAxis = null;
     this.yAxis = null;
     this.xScale = null;
     this.yScale = null;
     this.temperatureRange = [0, 0];
-    this.svg = null;
-    this.title = title;
     this.margin = margin;
     this.chartElement = chartElement;
+    this.tooltipElement = tooltipElement;
     this.width = width;
     this.height = height;
-    this.description = null;
+    this.svg = select(this.chartElement)
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height);
+    this.tooltip = new ChartTooltip(this.tooltipElement);
+    this.chartTitle = new ChartTitle(this.svg);
   }
 
   // Initialize the chart by fetching data and creating visual elements
   async init() {
     this.dataset = await this.getDataset();
-    // Create SVG container with specified dimensions
-    this.svg = select(this.chartElement)
-      .append('svg')
-      .attr('width', this.width)
-      .attr('height', this.height);
-    this.createTitles();
+    this.chartTitle.render({
+      title: this.title,
+      offsetX: this.width / 2,
+      offsetY: this.margin.top / 3,
+      description: this.getDescription(),
+      descriptionOffsetX: this.width / 2,
+      descriptionOffsetY: this.margin.top / 1.3,
+    });
     this.createAxes();
     this.createPlots();
-  }
-
-  // Add title and description text to the chart
-  createTitles() {
-    // Add main title centered at top
-    this.svg
-      ?.append('text')
-      .text(this.title)
-      .attr('x', this.width / 2)
-      .attr('y', this.margin.top / 3)
-      .attr('id', 'title')
-      .attr('text-anchor', 'middle')
-      .style('font-size', '24px');
-
-    // Add description below title
-    this.svg
-      ?.append('text')
-      .text(this.getDescription())
-      .attr('x', this.width / 2)
-      .attr('y', this.margin.top / 1.3)
-      .attr('id', 'description')
-      .attr('text-anchor', 'middle')
-      .style('font-size', '20px');
   }
 
   // Create X and Y axes with scales and tick marks
@@ -146,7 +147,6 @@ export default class Chart implements ChartParams {
   createPlots() {
     let yAxisTicksDistance = this.getYAxisTicksDistance();
     let xAxisTicksDistance = this.getXAxisTicksDistance();
-    let tooltip = select('#tooltip');
 
     // Bind data to rectangles and set their properties
     this.svg
@@ -161,7 +161,7 @@ export default class Chart implements ChartParams {
       .attr('y', (d: MonthlyVariance) => {
         return this.yScale ? this.yScale(d.month) : d.month;
       })
-      .attr('width', xAxisTicksDistance / 10)
+      .attr('width', xAxisTicksDistance / 20)
       .attr('height', yAxisTicksDistance)
       .attr('data-month', (d: MonthlyVariance) => d.month - 1)
       .attr('data-month-name', (d: MonthlyVariance) =>
@@ -172,40 +172,38 @@ export default class Chart implements ChartParams {
         this.getTempratureFromVariance(d.variance)
       )
       .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`)
-      .attr('fill', (d: MonthlyVariance) => {
+      .attr('fill', (d: MonthlyVariance, element) => {
         let temperature = this.getTempratureFromVariance(d.variance);
         return this.getCellColor(temperature);
       })
+      .attr('stroke', (d: MonthlyVariance) => {
+        let temperature = this.getTempratureFromVariance(d.variance);
+        return this.getCellColor(temperature);
+      })
+      .attr('stroke-width', 1)
       .on('mouseover', (event: MouseEvent, d: MonthlyVariance) => {
-        let offsetX = this.xScale ? this.xScale(d.year) : d.year;        
+        let offsetX = this.xScale ? this.xScale(d.year) : d.year;
         let offsetY = this.yScale ? this.yScale(d.month) : d.month;
         let target = event.target as SVGRectElement;
 
         select(target).attr('stroke', 'black').attr('stroke-width', 1);
-
-        tooltip
-          .style('opacity', 1)
-          .style('visibility', 'visible')
-          .style('left', `${offsetX - 40}px`)
-          .style('top', `${offsetY - 10}px`)
-          .html(
-            `
-            <span>${d.year} ${this.getMonthName(d.month)}</span>
-            <br>
-            <span>${this.getTempratureFromVariance(d.variance).toFixed(
-              2
-            )}&deg;C</span>
-            <br>
-            <span>${d.variance}&deg;C</span>                       
-          `
-          )
-          .style('text-align', 'center');
+        this.tooltip.display({
+          offsetX,
+          offsetY,
+          year: d.year,
+          month: this.getMonthName(d.month),
+          temp: this.getTempratureFromVariance(d.variance),
+          variance: parseFloat(
+            this.getTempratureFromVariance(d.variance).toFixed(2)
+          ),
+        });
       })
       .on('mouseout', (event) => {
         let target = event.target as SVGRectElement;
-
-        select(target).attr('stroke', 'none').attr('stroke-width', 1);
-        tooltip.style('opacity', 0).style('visibility', 'hidden');
+        select(target)
+          .attr('stroke', this.getCellColor(0))
+          .attr('stroke-width', 0);
+        this.tooltip.hide();
       });
   }
 

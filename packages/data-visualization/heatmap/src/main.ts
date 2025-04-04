@@ -7,6 +7,7 @@ const chart = new Chart({
   width: 1200,
   height: 750,
   chartElement: document.getElementById('chart') as HTMLElement,
+  tooltipElement: document.getElementById('tooltip') as HTMLElement,
 });
 
 chart.init();

@@ -1,3 +1,5 @@
+import { Selection } from 'd3-selection';
+
 export type MonthlyVariance = {
   year: number;
   month: number;
@@ -15,6 +17,7 @@ export type ChartParams = {
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };
   chartElement: HTMLElement;
+  tooltipElement: HTMLElement;
 };
 
 export enum ChartColor {
@@ -28,3 +31,5 @@ export enum ChartColor {
   RubyGlow = '#B71C3A',
   VelvetRed = '#A0122F',
 }
+
+export type SVGSelection = Selection<SVGSVGElement, unknown, null, any> | null;
