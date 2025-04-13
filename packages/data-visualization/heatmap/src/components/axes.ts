@@ -63,9 +63,11 @@ export default class ChartAxes {
   }
 
   getYAxis(scale: ScaleLinear<number, number>) {
-    return axisLeft(scale).tickFormat((monthNumber: NumberValue) =>
-      this.utils.getMonthName(monthNumber)
-    );
+    return axisLeft(scale)
+      .tickFormat((monthNumber: NumberValue) =>
+        this.utils.getMonthName(monthNumber)
+      )
+      .tickSizeOuter(10);
   }
 
   render({
@@ -76,7 +78,10 @@ export default class ChartAxes {
     yAxisLeftOffset,
   }: RenderParams) {
     this.xRange = this.getRange(monthlyVariance, 'year');
-    this.yRange = this.getRange(monthlyVariance, 'month');
+    this.yRange = this.getRange(monthlyVariance, 'month').toReversed() as [
+      number,
+      number
+    ];
     this.xScale = this.getScale(this.xRange, xScaleRange);
     this.yScale = this.getScale(this.yRange, yScaleRange);
     this.xAxis = this.getXAxis(this.xScale, this.createYearTicks(this.xRange));

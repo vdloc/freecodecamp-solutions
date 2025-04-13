@@ -36,7 +36,8 @@ export default class ChartTooltip {
           .replace('@month', month.toString())
           .replace('@temp', temp.toString())
           .replace('@variance', variance.toString())
-      );
+      )
+      .attr('data-year', year.toString());
   }
   hide() {
     this.selection.style('opacity', 0).style('visibility', 'hidden');

@@ -14,6 +14,7 @@ import ChartTitle from './components/title';
 import ChartAxes from './components/axes';
 import ChartPlots from './components/plots';
 import utils from './utils/utils';
+import chartLegend, { ChartLegend } from './components/legend';
 
 // Chart class implementing ChartParams interface for creating a temperature variance visualization
 export default class Chart {
@@ -29,10 +30,11 @@ export default class Chart {
   chartTooltip: ChartTooltip;
   chartAxes: ChartAxes;
   chartPlots: ChartPlots;
+  chartLegend: ChartLegend;
   utils: typeof utils = utils;
 
   // URL containing global temperature data in JSON format
-  jsonUrl =
+  private readonly jsonUrl =
     'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json';
 
   constructor({
@@ -58,6 +60,7 @@ export default class Chart {
     this.chartTitle = new ChartTitle(this.svg);
     this.chartAxes = new ChartAxes(this.svg);
     this.chartPlots = new ChartPlots(this.svg);
+    this.chartLegend = chartLegend;
   }
 
   // Initialize the chart by fetching data and creating visual elements
@@ -72,7 +75,7 @@ export default class Chart {
       descriptionOffsetY: this.margin.top / 1.3,
     });
     this.chartAxes.render({
-      monthlyVariance: this.dataset?.monthlyVariance || [],
+      monthlyVariance: (this.dataset?.monthlyVariance || []).toReversed(),
       xScaleRange: [this.margin.left, this.width - this.margin.right],
       yScaleRange: [this.height - this.margin.bottom, this.margin.top],
       xAxisBottomOffset: this.height - this.margin.bottom,
@@ -83,12 +86,16 @@ export default class Chart {
       xScale: this.chartAxes.xScale,
       yScale: this.chartAxes.yScale,
     });
+    this.chartLegend.render({
+      svg: this.svg,
+      dataset: this.dataset,
+    });
 
-    // if (this.chartPlots.cells) {
-    //   this.chartPlots.cells
-    //     .on('mouseover', this.onPlotMouseOver)
-    //     .on('mouseout', this.onPlotsMouseOut);
-    // }
+    if (this.chartPlots.cells) {
+      this.chartPlots.cells
+        .on('mouseover', this.onPlotMouseOver)
+        .on('mouseout', this.onPlotsMouseOut);
+    }
   }
 
   onPlotMouseOver = (
@@ -108,10 +115,8 @@ export default class Chart {
       offsetY,
       year,
       month: this.utils.getMonthName(month),
-      temp: this.chartPlots.getCellTemparature(baseTemperature, variance),
-      variance: parseFloat(
-        this.chartPlots.getCellTemparature(baseTemperature, variance).toFixed(2)
-      ),
+      temp: this.utils.getCellTemparature(baseTemperature, variance),
+      variance: parseFloat(variance.toFixed(2)),
     });
   };
 

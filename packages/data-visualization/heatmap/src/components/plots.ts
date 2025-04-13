@@ -1,7 +1,14 @@
 import { ScaleLinear, extent } from 'd3';
-import { MonthlyVariance, SVGSelection, ChartColor, Dataset } from '../types';
+import {
+  MonthlyVariance,
+  SVGSelection,
+  ChartColor,
+  Dataset,
+  ColorDataEntry,
+} from '../types';
 import utils from '../utils/utils';
 import { Selection } from 'd3-selection';
+import chartLegend, { ChartLegend } from './legend';
 
 type RenderParams = {
   monthlyVariance: MonthlyVariance[] | [];
@@ -10,15 +17,10 @@ type RenderParams = {
   baseTemperature: number;
 };
 
-interface ColorDataEntry {
-  color: string;
-  start: number;
-  end: number;
-}
-
 export default class ChartPlots {
   private svg: SVGSelection;
   private utils: typeof utils = utils;
+  private legend: ChartLegend;
   public cells?: Selection<
     SVGRectElement,
     MonthlyVariance,
@@ -29,6 +31,8 @@ export default class ChartPlots {
   private static readonly CELL_CLASS: string = 'cell';
   constructor(svg: SVGSelection) {
     this.svg = svg;
+    this.legend = chartLegend;
+    this.utils = utils;
   }
 
   render({ monthlyVariance, baseTemperature, xScale, yScale }: RenderParams) {
@@ -38,8 +42,14 @@ export default class ChartPlots {
     let yAxisTicksDistance = this.getTickDistance(yScale);
     let cellWidth = xAxisTicksDistance / 20;
     let cellHeight = yAxisTicksDistance;
-    console.log(' yAxisTicksDistance:', yAxisTicksDistance);
+    let temparatureRange = chartLegend.getTemparatureRange({
+      monthlyVariance,
+      baseTemperature,
+    });
 
+    let colorRanges = chartLegend.getTemparatureColors(temparatureRange);
+
+    
     this.cells = this.svg
       .selectAll('rect')
       .data(monthlyVariance)
@@ -57,14 +67,20 @@ export default class ChartPlots {
       )
       .attr('data-year', ({ year }: MonthlyVariance) => year)
       .attr('data-temp', ({ variance }: MonthlyVariance) =>
-        this.getCellTemparature(baseTemperature, variance)
+        this.utils.getCellTemparature(baseTemperature, variance)
       )
       // .attr('transform', `translate(0, -${yAxisTicksDistance / 2})`)
       .attr('fill', ({ variance }: MonthlyVariance) =>
-        this.getCellColor(this.getCellTemparature(baseTemperature, variance))
+        this.getCellColor(
+          this.utils.getCellTemparature(baseTemperature, variance),
+          colorRanges
+        )
       )
       .attr('stroke', ({ variance }: MonthlyVariance) =>
-        this.getCellColor(this.getCellTemparature(baseTemperature, variance))
+        this.getCellColor(
+          this.utils.getCellTemparature(baseTemperature, variance),
+          colorRanges
+        )
       )
       .attr('stroke-width', 1);
   }
@@ -80,13 +96,10 @@ export default class ChartPlots {
     return 0;
   }
 
-  getCellTemparature(baseTemperature: number, variance: number) {
-    return Number(baseTemperature || 0) + variance;
-  }
-
-  getCellColor(temperature: number) {
-    const colorsData = this.getTemparatureColors();
-
+  getCellColor(
+    temperature: number,
+    colorsData: Record<string, ColorDataEntry>
+  ) {
     for (const colorName in colorsData) {
       if (
         temperature >= colorsData[colorName].start &&
@@ -96,35 +109,6 @@ export default class ChartPlots {
       }
     }
 
-    return ChartColor.VelvetRed; // Default color if no match found
-  }
-
-  // Create color scale based on temperature range
-  getTemparatureColors(temperatureRange: [number, number] = [0, 0]) {
-    let [startTemperature, endTemperature] = temperatureRange;
-    const colors = Object.entries(ChartColor);
-    const colorsCount = colors.length;
-    const temperatureStep = (endTemperature - startTemperature) / colorsCount;
-
-    return colors.reduce<Record<string, ColorDataEntry>>(
-      (colorsData, [colorName, colorValue], index) => {
-        colorsData[colorName] = {
-          color: colorValue,
-          start: startTemperature + index * temperatureStep,
-          end: startTemperature + (index + 1) * temperatureStep,
-        };
-        return colorsData;
-      },
-      {}
-    );
-  }
-
-  getTemparatureRange({ monthlyVariance, baseTemperature }: Dataset) {
-    const partialExtent = extent(
-      monthlyVariance ?? [],
-      ({ variance }: MonthlyVariance) =>
-        this.getCellTemparature(baseTemperature, variance)
-    );
-    return partialExtent;
+    return ChartColor.Blue; // Default color if no match found
   }
 }
