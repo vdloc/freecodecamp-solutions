@@ -11,31 +11,47 @@ import utils from '../utils/utils';
 type RenderParams = {
   svg: SVGSelection;
   dataset: Dataset;
+  offsetX: number;
+  offsetY: number;
 };
 
 export class ChartLegend {
-  svg: SVGSelection | null;
-  utils: typeof utils;
+  private svg: SVGSelection | null;
+  private utils: typeof utils;
+  private static readonly LEGEND_ID: string = 'legend';
+  private static readonly LEGEND_SIZE: number = 60;
   constructor() {
     this.utils = utils;
     this.svg = null;
   }
 
-  render({ svg, dataset }: RenderParams) {
+  render({ svg, dataset, offsetX, offsetY }: RenderParams) {
     this.svg = svg;
     if (!this.svg) return;
     const temparatureRange = this.getTemparatureRange(dataset);
     const colors = this.getTemparatureColors(temparatureRange);
-    this.svg
-      .select('g')
-      .data(Object.entries(colors))
-      .enter()
-      .attr('id', 'legend')
-      .append('rect')
-      .attr('width', 20)
-      .attr('height', 20)
-      .attr('fill', ([colorName, colorData]) => colorData.color);
+
+    const group = this.svg
+      .append('g')
+      .attr('id', ChartLegend.LEGEND_ID)
+      .attr('transform', `translate(${offsetX}, ${offsetY})`)
+      .selectAll('rect')
+      .data(Object.values(colors))
+      .join('rect');
+
+    group
+      .attr('width', ChartLegend.LEGEND_SIZE)
+      .attr('height', ChartLegend.LEGEND_SIZE)
+      .attr('fill', (colorData, index) => {
+        return colorData.color;
+      })
+      .attr('stroke', 'black')
+      .attr('x', (_, index) => index * ChartLegend.LEGEND_SIZE)
+      .attr('y', 0);
+
+    console.log(' this.svg:', this.svg);
   }
+
   // Create color scale based on temperature range
   getTemparatureColors(temperatureRange: [number, number] = [0, 0]) {
     let [startTemperature, endTemperature] = temperatureRange;

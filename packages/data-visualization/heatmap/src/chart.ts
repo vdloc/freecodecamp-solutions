@@ -72,7 +72,7 @@ export default class Chart {
       offsetY: this.margin.top / 3,
       description: this.getDescription(),
       descriptionOffsetX: this.width / 2,
-      descriptionOffsetY: this.margin.top / 1.3,
+      descriptionOffsetY: this.margin.top / 2,
     });
     this.chartAxes.render({
       monthlyVariance: (this.dataset?.monthlyVariance || []).toReversed(),
@@ -89,6 +89,8 @@ export default class Chart {
     this.chartLegend.render({
       svg: this.svg,
       dataset: this.dataset,
+      offsetX: this.margin.left,
+      offsetY: this.height - this.margin.bottom / 2,
     });
 
     if (this.chartPlots.cells) {
