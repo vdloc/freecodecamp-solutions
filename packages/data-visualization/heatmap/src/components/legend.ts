@@ -17,7 +17,7 @@ type RenderParams = {
 
 export class ChartLegend {
   private svg: SVGSelection | null;
-  private utils: typeof utils;
+  utils: typeof utils;
   private static readonly LEGEND_ID: string = 'legend';
   private static readonly LEGEND_SIZE: number = 60;
   constructor() {
@@ -42,7 +42,7 @@ export class ChartLegend {
     group
       .attr('width', ChartLegend.LEGEND_SIZE)
       .attr('height', ChartLegend.LEGEND_SIZE)
-      .attr('fill', (colorData, index) => {
+      .attr('fill', (colorData) => {
         return colorData.color;
       })
       .attr('stroke', 'black')

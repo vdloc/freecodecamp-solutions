@@ -1,9 +1,8 @@
-import { ScaleLinear, extent } from 'd3';
+import { ScaleLinear } from 'd3';
 import {
   MonthlyVariance,
   SVGSelection,
   ChartColor,
-  Dataset,
   ColorDataEntry,
 } from '../types';
 import utils from '../utils/utils';
@@ -20,7 +19,7 @@ type RenderParams = {
 export default class ChartPlots {
   private svg: SVGSelection;
   private utils: typeof utils = utils;
-  private legend: ChartLegend;
+  legend: ChartLegend;
   public cells?: Selection<
     SVGRectElement,
     MonthlyVariance,
@@ -49,7 +48,6 @@ export default class ChartPlots {
 
     let colorRanges = chartLegend.getTemparatureColors(temparatureRange);
 
-    
     this.cells = this.svg
       .selectAll('rect')
       .data(monthlyVariance)

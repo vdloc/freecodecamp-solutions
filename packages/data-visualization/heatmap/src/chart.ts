@@ -1,14 +1,5 @@
-import { extent, pointer } from 'd3';
-import {
-  Dataset,
-  ChartParams,
-  MonthlyVariance,
-  ChartColor,
-  SVGSelection,
-} from './types';
-import { Axis, axisBottom, axisLeft } from 'd3-axis';
-import { NumberValue, scaleLinear, ScaleLinear } from 'd3-scale';
-import { select, Selection } from 'd3-selection';
+import { Dataset, ChartParams, MonthlyVariance, SVGSelection } from './types';
+import { select } from 'd3-selection';
 import ChartTooltip from './components/tooltip';
 import ChartTitle from './components/title';
 import ChartAxes from './components/axes';
