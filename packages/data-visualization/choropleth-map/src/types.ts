@@ -13,6 +13,7 @@ export type Dataset = {
 
 export type ChartParams = {
   title: string;
+  description: string;
   width: number;
   height: number;
   margin: { top: number; right: number; bottom: number; left: number };

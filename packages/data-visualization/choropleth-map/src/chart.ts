@@ -17,6 +17,7 @@ export default class Chart {
   chartElement: HTMLElement;
   tooltipElement: HTMLElement;
   title: string;
+  description: string;
   chartTitle: ChartTitle;
   chartTooltip: ChartTooltip;
   chartAxes: ChartAxes;
@@ -25,11 +26,14 @@ export default class Chart {
   utils: typeof utils = utils;
 
   // URL containing global temperature data in JSON format
-  private readonly jsonUrl =
-    'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json';
+  private readonly educationDataURL =
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
+  private readonly countiesDataURL =
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
 
   constructor({
     title,
+    description,
     margin,
     width,
     height,
@@ -37,6 +41,7 @@ export default class Chart {
     tooltipElement,
   }: ChartParams) {
     this.title = title;
+    this.description = description;
     this.dataset = null;
     this.margin = margin;
     this.chartElement = chartElement;
@@ -57,38 +62,40 @@ export default class Chart {
   // Initialize the chart by fetching data and creating visual elements
   async init() {
     this.dataset = await this.getDataset();
-    this.chartTitle.render({
-      title: this.title,
-      offsetX: this.width / 2,
-      offsetY: this.margin.top / 3,
-      description: this.getDescription(),
-      descriptionOffsetX: this.width / 2,
-      descriptionOffsetY: this.margin.top / 2,
-    });
-    this.chartAxes.render({
-      monthlyVariance: (this.dataset?.monthlyVariance || []).toReversed(),
-      xScaleRange: [this.margin.left, this.width - this.margin.right],
-      yScaleRange: [this.height - this.margin.bottom, this.margin.top],
-      xAxisBottomOffset: this.height - this.margin.bottom,
-      yAxisLeftOffset: this.margin.left,
-    });
-    this.chartPlots.render({
-      ...this.dataset,
-      xScale: this.chartAxes.xScale,
-      yScale: this.chartAxes.yScale,
-    });
-    this.chartLegend.render({
-      svg: this.svg,
-      dataset: this.dataset,
-      offsetX: this.margin.left,
-      offsetY: this.height - this.margin.bottom / 2,
-    });
+    console.log(' this.dataset:', this.dataset);
 
-    if (this.chartPlots.cells) {
-      this.chartPlots.cells
-        .on('mouseover', this.onPlotMouseOver)
-        .on('mouseout', this.onPlotsMouseOut);
-    }
+    // this.chartTitle.render({
+    //   title: this.title,
+    //   offsetX: this.width / 2,
+    //   offsetY: this.margin.top / 3,
+    //   description: this.description,
+    //   descriptionOffsetX: this.width / 2,
+    //   descriptionOffsetY: this.margin.top / 2,
+    // });
+    // this.chartAxes.render({
+    //   monthlyVariance: (this.dataset?.monthlyVariance || []).toReversed(),
+    //   xScaleRange: [this.margin.left, this.width - this.margin.right],
+    //   yScaleRange: [this.height - this.margin.bottom, this.margin.top],
+    //   xAxisBottomOffset: this.height - this.margin.bottom,
+    //   yAxisLeftOffset: this.margin.left,
+    // });
+    // this.chartPlots.render({
+    //   ...this.dataset,
+    //   xScale: this.chartAxes.xScale,
+    //   yScale: this.chartAxes.yScale,
+    // });
+    // this.chartLegend.render({
+    //   svg: this.svg,
+    //   dataset: this.dataset,
+    //   offsetX: this.margin.left,
+    //   offsetY: this.height - this.margin.bottom / 2,
+    // });
+
+    // if (this.chartPlots.cells) {
+    //   this.chartPlots.cells
+    //     .on('mouseover', this.onPlotMouseOver)
+    //     .on('mouseout', this.onPlotsMouseOut);
+    // }
   }
 
   onPlotMouseOver = (
@@ -136,9 +143,11 @@ export default class Chart {
   }
 
   // Fetch temperature dataset from JSON URL
-  async getDataset(): Promise<Dataset> {
-    const response = await fetch(this.jsonUrl);
-    const data = await response.json();
-    return data;
+  async getDataset(): Promise<any> {
+    return await Promise.all(
+      [this.educationDataURL, this.countiesDataURL].map((url) =>
+        fetch(url).then((res) => res.json())
+      )
+    );
   }
 }

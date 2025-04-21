@@ -9,6 +9,7 @@ import utils from '../utils/utils';
 import { Selection } from 'd3-selection';
 import chartLegend, { ChartLegend } from './legend';
 
+
 type RenderParams = {
   monthlyVariance: MonthlyVariance[] | [];
   xScale?: ScaleLinear<number, number>;
