@@ -10,11 +10,13 @@
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
+    "@types/topojson": "^3.2.6",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.17",
-    "d3": "^7.9.0"
+    "d3": "^7.9.0",
+    "topojson-client": "^3.1.0"
   }
 }

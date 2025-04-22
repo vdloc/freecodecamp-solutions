@@ -3,6 +3,7 @@
 
 import { centroid, geo, plot } from '@observablehq/plot';
 import { json } from 'd3';
+import * as topojson from 'topojson-client';
 
 // const chart = new Chart({
 //   title: 'United States Educational Attainment',
@@ -20,31 +21,37 @@ import { json } from 'd3';
 const unemployment = await json(
   'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json'
 );
+const counties = await json(
+  'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json'
+);
+console.log(' unemployment:', counties);
 
-plot({
-  width: 975,
-  height: 610,
-  projection: 'identity',
-  color: {
-    type: 'quantize',
-    n: 9,
-    domain: [1, 10],
-    scheme: 'blues',
-    label: 'Unemployment rate (%)',
-    legend: true,
-  },
-  marks: [
-    geo(
-      counties,
-      centroid({
-        fill: (d) => unemployment.get(d.id),
-        tip: true,
-        channels: {
-          County: (d) => d.properties.name,
-          State: (d) => statemap.get(d.id.slice(0, 2)).properties.name,
-        },
-      })
-    ),
-    geo(states, { stroke: 'white' }),
-  ],
-});
+let states = topojson.feature(counties, counties.objects.states);
+
+// plot({
+//   width: 975,
+//   height: 610,
+//   projection: 'identity',
+//   color: {
+//     type: 'quantize',
+//     n: 9,
+//     domain: [1, 10],
+//     scheme: 'blues',
+//     label: 'Unemployment rate (%)',
+//     legend: true,
+//   },
+//   marks: [
+//     geo(
+//       counties,
+//       centroid({
+//         fill: (d) => unemployment.get(d.id),
+//         tip: true,
+//         channels: {
+//           County: (d) => d.properties.name,
+//           State: (d) => statemap.get(d.id.slice(0, 2)).properties.name,
+//         },
+//       })
+//     ),
+//     geo(states, { stroke: 'white' }),
+//   ],
+// });
