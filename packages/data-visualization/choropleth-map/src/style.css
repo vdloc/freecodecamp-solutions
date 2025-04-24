@@ -7,6 +7,22 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.chart-header {
+  text-align: center;
+}
+
+#title {
+  font-size: 2.4rem;
+}
+
+#description {
+  font-size: 1.5rem;
+}
+
+#chart {
+  display: grid;
+  place-content: center;
+}
 
 #tooltip {
   opacity: 0;
