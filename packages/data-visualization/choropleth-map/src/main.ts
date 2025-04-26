@@ -14,13 +14,14 @@ const CANVAS = {
   w: 700,
   h: 700,
 };
-const unemployment = await json(
-  'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json'
-);
+const unemployment: (Record<string, any> | undefined)[] =
+  (await json(
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json'
+  )) ?? [];
 const counties: any = await json(
   'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json'
 );
-console.log(' unemployment:', counties);
+console.log(' unemployment:', unemployment);
 
 const geoData: Record<string, any> = {};
 const keys = Object.keys(counties.objects);
@@ -32,7 +33,8 @@ console.log(' keys:', keys);
 const projection = geoIdentity().fitSize([CANVAS.w, CANVAS.h], geoData.nation);
 const paths = geoPath(projection);
 
-const colorScale = scaleQuantize().domain([0, 100]).range(schemeBlues[6].map((d) => parseFloat(d)));
+const colorScale = scaleQuantize().domain([3, 66]).range(schemeBlues[9]);
+console.log(' colorScale:', colorScale);
 
 const svgContainer = select('#chart')
   .append('svg')
@@ -54,31 +56,21 @@ const assets = groups
   .enter()
   .append('path')
   .attr('d', paths)
-  .attr('class', 'county');
-// plot({
-//   width: 975,
-//   height: 610,
-//   projection: 'identity',
-//   color: {
-//     type: 'quantize',
-//     n: 9,
-//     domain: [1, 10],
-//     scheme: 'blues',
-//     label: 'Unemployment rate (%)',
-//     legend: true,
-//   },
-//   marks: [
-//     geo(
-//       counties,
-//       centroid({
-//         fill: (d) => unemployment.get(d.id),
-//         tip: true,
-//         channels: {
-//           County: (d) => d.properties.name,
-//           State: (d) => statemap.get(d.id.slice(0, 2)).properties.name,
-//         },
-//       })
-//     ),
-//     geo(states, { stroke: 'white' }),
-//   ],
-// });
+  .attr('class', 'county')
+  .attr('fill', (d) => {
+    let id = d.id;
+    let percent = unemployment.find((item) => item.fips === id);
+    return colorScale(percent?.bachelorsOrHigher ?? 4);
+  })
+  .attr('data-fips', (d) => {
+    let id = d.id;
+    let percent = unemployment.find((item) => item.fips === id);
+
+    return percent?.fips || d.id;
+  })
+  .attr('data-education', (d) => {
+    let id = d.id;
+    let percent = unemployment.find((item) => item.fips === id);
+
+    return percent?.bachelorsOrHigher ?? 4;
+  });
