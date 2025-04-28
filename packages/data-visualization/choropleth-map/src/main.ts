@@ -4,15 +4,16 @@ import {
   geoPath,
   json,
   scaleQuantize,
-  scaleThreshold,
   schemeBlues,
   select,
+  Selection,
 } from 'd3';
 import * as topojson from 'topojson-client';
+import { Topology, GeometryObject } from 'topojson-specification';
 
 const CANVAS = {
-  w: 700,
-  h: 700,
+  w: 900,
+  h: 900,
 };
 const unemployment: (Record<string, any> | undefined)[] =
   (await json(
@@ -21,38 +22,29 @@ const unemployment: (Record<string, any> | undefined)[] =
 const counties: any = await json(
   'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json'
 );
-console.log(' unemployment:', unemployment);
-
 const geoData: Record<string, any> = {};
 const keys = Object.keys(counties.objects);
 
 keys.forEach((key) => {
   geoData[key] = topojson.feature(counties, counties.objects[key]);
 });
-console.log(' keys:', keys);
+
 const projection = geoIdentity().fitSize([CANVAS.w, CANVAS.h], geoData.nation);
 const paths = geoPath(projection);
-
 const colorScale = scaleQuantize().domain([3, 66]).range(schemeBlues[9]);
-console.log(' colorScale:', colorScale);
-
 const svgContainer = select('#chart')
   .append('svg')
   .attr('viewBox', `0 0 ${CANVAS.w} ${CANVAS.h}`)
-  .attr('width', CANVAS.w)
-  .classed('floormap', true);
-
+  .attr('width', CANVAS.w);
 const groups = svgContainer
   .selectAll('g')
-  .data(keys)
+  .data(keys[0])
   .enter()
   .append('g')
   .attr('class', (d) => d);
-
-// Create all paths for the separate g element
 const assets = groups
   .selectAll('path')
-  .data((d) => geoData[d]?.features)
+  .data(geoData.counties.features)
   .enter()
   .append('path')
   .attr('d', paths)
@@ -74,3 +66,59 @@ const assets = groups
 
     return percent?.bachelorsOrHigher ?? 4;
   });
+
+type CountyEducation = {
+  fips: number;
+  state: string;
+  area_name: string;
+  bachelorsOrHigher: number;
+};
+
+class Chart {
+  private static readonly UNEMPLOYEE_DATA_URL =
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
+  private static readonly COUNTIES_DATA_URL =
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
+  private unemployment: CountyEducation[] = [];
+  private counties: Topology | null = null;
+
+  public width: number;
+  public height: number;
+  private chartElement: HTMLElement;
+  private svg: Selection<SVGSVGElement, unknown, null, any> | null;
+
+  constructor() {
+    this.width = 900;
+    this.height = 900;
+    this.chartElement = document.getElementById('chart') as HTMLElement;
+    this.svg = null;
+    this.init();
+  }
+
+  async init() {
+    let [unemployment, counties] = await this.getData();
+    this.counties = counties;
+    this.unemployment = unemployment;
+    this.initChart();
+  }
+
+  async getData() {
+    return await Promise.all(
+      [Chart.UNEMPLOYEE_DATA_URL, Chart.COUNTIES_DATA_URL].map((url) =>
+        fetch(url).then((res) => res.json())
+      )
+    );
+  }
+
+  initChart() {
+    this.svg = select(this.chartElement)
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height);
+    console.log(' this.svg :', this.svg);
+  }
+
+  createPlots() {}
+}
+
+new Chart();

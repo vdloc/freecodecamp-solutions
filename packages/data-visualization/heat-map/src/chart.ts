@@ -25,10 +25,8 @@ export default class Chart {
   utils: typeof utils = utils;
 
   // URL containing global temperature data in JSON format
-  private readonly educationJsonUrl =
-    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
-  private readonly countiesJsonUrl =
-    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
+  private readonly jsonUrl =
+    'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/global-temperature.json';
 
   constructor({
     title,
