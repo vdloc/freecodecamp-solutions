@@ -9,7 +9,12 @@ import {
   Selection,
 } from 'd3';
 import * as topojson from 'topojson-client';
-import { Topology, GeometryObject } from 'topojson-specification';
+import {
+  Topology,
+  GeometryObject,
+  Objects,
+  Properties,
+} from 'topojson-specification';
 
 const CANVAS = {
   w: 900,
@@ -81,6 +86,7 @@ class Chart {
     'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
   private unemployment: CountyEducation[] = [];
   private counties: Topology | null = null;
+  private geoData: Record<string, any> = {};
 
   public width: number;
   public height: number;
@@ -99,6 +105,8 @@ class Chart {
     let [unemployment, counties] = await this.getData();
     this.counties = counties;
     this.unemployment = unemployment;
+    this.geoData = this.getGeoData();
+    console.log(" this.geoData:", this.geoData)
     this.initChart();
   }
 
@@ -110,15 +118,30 @@ class Chart {
     );
   }
 
+  getGeoData() {
+    const objects = this.counties?.objects || {};
+    const geoData: Record<keyof typeof objects, any> = {};
+
+    for (let key in objects) {
+      geoData[key as keyof typeof objects] = topojson.feature(
+        counties,
+        objects[key]
+      );
+    }
+
+    return geoData;
+  }
+
   initChart() {
     this.svg = select(this.chartElement)
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height);
-    console.log(' this.svg :', this.svg);
   }
 
-  createPlots() {}
+  createPlots() {
+    topojson.feature(counties, counties.objects);
+  }
 }
 
 new Chart();
