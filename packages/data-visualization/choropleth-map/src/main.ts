@@ -1,8 +1,10 @@
 import './style.css';
 import {
+  extent,
   geoIdentity,
   geoPath,
   json,
+  ScaleQuantize,
   scaleQuantize,
   schemeBlues,
   select,
@@ -92,12 +94,14 @@ class Chart {
   public height: number;
   private chartElement: HTMLElement;
   private svg: Selection<SVGSVGElement, unknown, null, any> | null;
+  private colorScale: ScaleQuantize<number, number> | null;
 
   constructor() {
     this.width = 900;
     this.height = 900;
     this.chartElement = document.getElementById('chart') as HTMLElement;
     this.svg = null;
+    this.colorScale = null;
     this.init();
   }
 
@@ -106,7 +110,7 @@ class Chart {
     this.counties = counties;
     this.unemployment = unemployment;
     this.geoData = this.getGeoData();
-    console.log(" this.geoData:", this.geoData)
+    this.colorScale = this.getColorScale();
     this.initChart();
   }
 
@@ -130,6 +134,24 @@ class Chart {
     }
 
     return geoData;
+  }
+
+  getPaths() {
+    const projection = geoIdentity().fitSize(
+      [this.width, this.height],
+      this.geoData.nation
+    );
+    return geoPath(projection);
+  }
+
+  getColorScale() {
+    let dataRange = extent(
+      this.unemployment.map((record) => record.bachelorsOrHigher)
+    );
+
+    return scaleQuantize()
+      .domain(dataRange as number[])
+      .range(schemeBlues[6].map(Number));
   }
 
   initChart() {
