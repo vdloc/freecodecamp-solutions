@@ -85,7 +85,6 @@ class Chart {
       .attr('width', this.width)
       .attr('height', this.height);
     this.createPlots();
-    this.createTooltip();
   }
 
   async getData() {
