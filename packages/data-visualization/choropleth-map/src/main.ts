@@ -55,14 +55,18 @@ class Chart {
   public width: number;
   public height: number;
   private chartElement: HTMLElement;
+  private toolTipElement: HTMLElement;
   private svg: Selection<SVGSVGElement, unknown, null, any> | null;
-  private colorScale: ScaleQuantize<number, number> | null;
+  private colorScale: ScaleQuantize<string, string> | null;
   private paths: ValueFn<SVGPathElement, unknown, any> | null;
 
   constructor() {
     this.width = 900;
     this.height = 900;
     this.chartElement = document.getElementById('chart') as HTMLElement;
+    this.toolTipElement = this.chartElement.querySelector(
+      '#tooltip'
+    ) as HTMLElement;
     this.svg = null;
     this.colorScale = null;
     this.paths = null;
@@ -76,7 +80,12 @@ class Chart {
     this.geoData = this.getGeoData();
     this.colorScale = this.getColorScale();
     this.paths = this.getPaths();
-    this.initChart();
+    this.svg = select(this.chartElement)
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height);
+    this.createPlots();
+    this.createTooltip();
   }
 
   async getData() {
@@ -118,13 +127,6 @@ class Chart {
 
     return scaleQuantize(dataRange as number[], schemeBlues[8]);
   }
-  initChart() {
-    this.svg = select(this.chartElement)
-      .append('svg')
-      .attr('width', this.width)
-      .attr('height', this.height);
-    this.createPlots();
-  }
 
   createPlots() {
     if (!this.svg) return;
@@ -155,6 +157,26 @@ class Chart {
         const percent = this.unemployment.find((item) => item.fips === id);
 
         return percent?.bachelorsOrHigher ?? 4;
+      })
+      .on('mouseover', (event, datum) => {
+        const { id } = datum as CountyGeometry;
+        const percent = this.unemployment.find((item) => item.fips === id);
+        const tooltip = select(this.toolTipElement);
+
+        tooltip
+          .style('opacity', 1)
+          .style('visibility', 'visible')
+          .attr('id', 'tooltip')
+          .attr('data-education', percent?.bachelorsOrHigher ?? 4)
+          .html(
+            `${percent?.area_name}, ${percent?.state}: ${percent?.bachelorsOrHigher}%`
+          )
+          .style('left', `${event.pageX}px`)
+          .style('top', `${event.pageY}px`);
+      })
+      .on('mouseout', () => {
+        const tooltip = select(this.toolTipElement);
+        tooltip.style('opacity', 0).style('visibility', 'hidden');
       });
   }
 }
