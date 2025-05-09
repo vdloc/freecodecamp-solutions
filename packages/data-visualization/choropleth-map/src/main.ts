@@ -2,13 +2,16 @@ import './style.css';
 import {
   extent,
   geoIdentity,
+  GeoPath,
   geoPath,
+  GeoPermissibleObjects,
   json,
   ScaleQuantize,
   scaleQuantize,
   schemeBlues,
   select,
   Selection,
+  ValueFn,
 } from 'd3';
 import * as topojson from 'topojson-client';
 import {
@@ -18,67 +21,26 @@ import {
   Properties,
 } from 'topojson-specification';
 
-const CANVAS = {
-  w: 900,
-  h: 900,
-};
-const unemployment: (Record<string, any> | undefined)[] =
-  (await json(
-    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json'
-  )) ?? [];
-const counties: any = await json(
-  'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json'
-);
-const geoData: Record<string, any> = {};
-const keys = Object.keys(counties.objects);
-
-keys.forEach((key) => {
-  geoData[key] = topojson.feature(counties, counties.objects[key]);
-});
-
-const projection = geoIdentity().fitSize([CANVAS.w, CANVAS.h], geoData.nation);
-const paths = geoPath(projection);
-const colorScale = scaleQuantize().domain([3, 66]).range(schemeBlues[9]);
-const svgContainer = select('#chart')
-  .append('svg')
-  .attr('viewBox', `0 0 ${CANVAS.w} ${CANVAS.h}`)
-  .attr('width', CANVAS.w);
-const groups = svgContainer
-  .selectAll('g')
-  .data(keys[0])
-  .enter()
-  .append('g')
-  .attr('class', (d) => d);
-const assets = groups
-  .selectAll('path')
-  .data(geoData.counties.features)
-  .enter()
-  .append('path')
-  .attr('d', paths)
-  .attr('class', 'county')
-  .attr('fill', (d) => {
-    let id = d.id;
-    let percent = unemployment.find((item) => item.fips === id);
-    return colorScale(percent?.bachelorsOrHigher ?? 4);
-  })
-  .attr('data-fips', (d) => {
-    let id = d.id;
-    let percent = unemployment.find((item) => item.fips === id);
-
-    return percent?.fips || d.id;
-  })
-  .attr('data-education', (d) => {
-    let id = d.id;
-    let percent = unemployment.find((item) => item.fips === id);
-
-    return percent?.bachelorsOrHigher ?? 4;
-  });
-
 type CountyEducation = {
   fips: number;
   state: string;
   area_name: string;
   bachelorsOrHigher: number;
+};
+
+type CountyGeometry = {
+  id: number;
+  type: 'Feature';
+  properties: {
+    name: string;
+    id: number;
+    state: string;
+    [key: string]: any;
+  };
+  geometry: {
+    type: 'Polygon' | 'MultiPolygon';
+    coordinates: [number, number][][];
+  };
 };
 
 class Chart {
@@ -95,6 +57,7 @@ class Chart {
   private chartElement: HTMLElement;
   private svg: Selection<SVGSVGElement, unknown, null, any> | null;
   private colorScale: ScaleQuantize<number, number> | null;
+  private paths: ValueFn<SVGPathElement, unknown, any> | null;
 
   constructor() {
     this.width = 900;
@@ -102,6 +65,7 @@ class Chart {
     this.chartElement = document.getElementById('chart') as HTMLElement;
     this.svg = null;
     this.colorScale = null;
+    this.paths = null;
     this.init();
   }
 
@@ -111,6 +75,7 @@ class Chart {
     this.unemployment = unemployment;
     this.geoData = this.getGeoData();
     this.colorScale = this.getColorScale();
+    this.paths = this.getPaths();
     this.initChart();
   }
 
@@ -123,12 +88,14 @@ class Chart {
   }
 
   getGeoData() {
-    const objects = this.counties?.objects || {};
+    if (!this.counties) return {};
+
+    const { objects } = this.counties as Topology;
     const geoData: Record<keyof typeof objects, any> = {};
 
     for (let key in objects) {
       geoData[key as keyof typeof objects] = topojson.feature(
-        counties,
+        this.counties,
         objects[key]
       );
     }
@@ -136,33 +103,59 @@ class Chart {
     return geoData;
   }
 
-  getPaths() {
+  getPaths(): ValueFn<SVGPathElement, unknown, any> {
     const projection = geoIdentity().fitSize(
       [this.width, this.height],
       this.geoData.nation
     );
-    return geoPath(projection);
+    return geoPath(projection) as ValueFn<SVGPathElement, unknown, any>;
   }
 
   getColorScale() {
     let dataRange = extent(
-      this.unemployment.map((record) => record.bachelorsOrHigher)
+      this.unemployment.map((record) => Number(record.bachelorsOrHigher))
     );
 
-    return scaleQuantize()
-      .domain(dataRange as number[])
-      .range(schemeBlues[6].map(Number));
+    return scaleQuantize(dataRange as number[], schemeBlues[8]);
   }
-
   initChart() {
     this.svg = select(this.chartElement)
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height);
+    this.createPlots();
   }
 
   createPlots() {
-    topojson.feature(counties, counties.objects);
+    if (!this.svg) return;
+
+    this.svg
+      .selectAll('path')
+      .data(this.geoData.counties.features)
+      .enter()
+      .append('path')
+      .attr('d', this.paths)
+      .attr('class', 'county')
+      .attr('fill', (datum) => {
+        const { id } = datum as CountyGeometry;
+        const percent = this.unemployment.find((item) => item.fips === id);
+
+        return this.colorScale
+          ? this.colorScale(Number(percent?.bachelorsOrHigher) ?? 4)
+          : null;
+      })
+      .attr('data-fips', (datum) => {
+        const { id } = datum as CountyGeometry;
+        const percent = this.unemployment.find((item) => item.fips === id);
+
+        return percent?.fips || id;
+      })
+      .attr('data-education', (datum) => {
+        const { id } = datum as CountyGeometry;
+        const percent = this.unemployment.find((item) => item.fips === id);
+
+        return percent?.bachelorsOrHigher ?? 4;
+      });
   }
 }
 
