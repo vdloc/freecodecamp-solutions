@@ -85,6 +85,7 @@ class Chart {
       .attr('width', this.width)
       .attr('height', this.height);
     this.createPlots();
+    this.createLegend();
   }
 
   async getData() {
@@ -124,7 +125,7 @@ class Chart {
       this.unemployment.map((record) => Number(record.bachelorsOrHigher))
     );
 
-    return scaleQuantize(dataRange as number[], schemeBlues[8]);
+    return scaleQuantize(dataRange as number[], schemeBlues[7]);
   }
 
   createPlots() {
@@ -177,6 +178,10 @@ class Chart {
         const tooltip = select(this.toolTipElement);
         tooltip.style('opacity', 0).style('visibility', 'hidden');
       });
+  }
+
+  createLegend() {
+    if (!this.svg) return;
   }
 }
 
