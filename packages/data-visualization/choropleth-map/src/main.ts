@@ -3,10 +3,7 @@ import {
   axisBottom,
   extent,
   geoIdentity,
-  GeoPath,
   geoPath,
-  GeoPermissibleObjects,
-  json,
   scaleLinear,
   ScaleQuantize,
   scaleQuantize,
@@ -16,12 +13,7 @@ import {
   ValueFn,
 } from 'd3';
 import * as topojson from 'topojson-client';
-import {
-  Topology,
-  GeometryObject,
-  Objects,
-  Properties,
-} from 'topojson-specification';
+import { Topology } from 'topojson-specification';
 
 type CountyEducation = {
   fips: number;
