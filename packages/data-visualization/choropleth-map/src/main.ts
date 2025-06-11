@@ -1,11 +1,13 @@
 import './style.css';
 import {
+  axisBottom,
   extent,
   geoIdentity,
   GeoPath,
   geoPath,
   GeoPermissibleObjects,
   json,
+  scaleLinear,
   ScaleQuantize,
   scaleQuantize,
   schemeBlues,
@@ -182,6 +184,37 @@ class Chart {
 
   createLegend() {
     if (!this.svg) return;
+
+    const percentRange = Array.from({ length: 8 }, (_, index) => 3 + index * 9);
+    const domainRange = Array.from({ length: 8 }, (_, index) => index * 50);
+    const legendWidth = 400;
+    const legend = this.svg
+      .append('g')
+      .attr('id', 'legend')
+      .attr('transform', `translate(${this.width - legendWidth}, 100)`);
+
+    const legendScale = scaleLinear(percentRange, domainRange);
+    const ticksDistance =
+      legendScale(percentRange[1]) - legendScale(percentRange[0]);
+    const legendAxis = axisBottom(legendScale)
+      .tickValues(percentRange)
+      .tickSize(15)
+      .tickFormat((d) => `${d}%`);
+    legend
+      .selectAll('rect')
+      .data(percentRange.slice(0, -1))
+      .enter()
+      .append('rect')
+      .attr('x', (d) => legendScale(d))
+      .attr('y', -0)
+      .attr('width', ticksDistance)
+      .attr('height', 15)
+      .attr('style', 'position: relative;z-index: 99')
+      .attr('fill', (d) => (this.colorScale ? this.colorScale(d) : 'black'))
+      .attr('class', 'legend-item');
+    legend.append('g').attr('class', 'axis').call(legendAxis);
+
+    legend.select('.domain').remove();
   }
 }
 
