@@ -1,0 +1,22 @@
+{
+  "name": "choropleth-map",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/topojson": "^3.2.6",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "@observablehq/plot": "^0.6.17",
+    "d3": "^7.9.0",
+    "topojson-client": "^3.1.0"
+  }
+}
