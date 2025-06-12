@@ -38,8 +38,8 @@ type CountyGeometry = {
 };
 
 class Chart {
-  private static readonly UNEMPLOYEE_DATA_URL =
-    'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json';
+  private static readonly DATA_URL =
+    'https://cdn.freecodecamp.org/testable-projects-fcc/data/tree_map/video-game-sales-data.json';
   private static readonly COUNTIES_DATA_URL =
     'https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json';
   private unemployment: CountyEducation[] = [];
@@ -68,9 +68,9 @@ class Chart {
   }
 
   async init() {
-    let [unemployment, counties] = await this.getData();
-    this.counties = counties;
-    this.unemployment = unemployment;
+    let data = await this.getData();
+    console.log(' data:', data);
+
     this.geoData = this.getGeoData();
     this.colorScale = this.getColorScale();
     this.paths = this.getPaths();
@@ -83,11 +83,7 @@ class Chart {
   }
 
   async getData() {
-    return await Promise.all(
-      [Chart.UNEMPLOYEE_DATA_URL, Chart.COUNTIES_DATA_URL].map((url) =>
-        fetch(url).then((res) => res.json())
-      )
-    );
+    return await fetch(Chart.DATA_URL).then((res) => res.json());
   }
 
   getGeoData() {
