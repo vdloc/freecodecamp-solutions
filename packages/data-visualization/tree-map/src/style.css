@@ -34,3 +34,8 @@
   padding: 0.5rem;
   border-radius: 0.5rem;
 }
+
+#tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+}

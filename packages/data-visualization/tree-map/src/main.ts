@@ -18,6 +18,8 @@ import {
   ValueFn,
 } from 'd3';
 
+const textWrap = (window.d3plus as any).textWrap;
+
 type Data = { children: Data[]; name: string; value?: string | number } | null;
 
 class Chart {
@@ -92,7 +94,35 @@ class Chart {
       .attr('width', (d) => d.x1 - d.x0)
       .attr('height', (d) => d.y1 - d.y0)
       .attr('fill', (d) => {
-        return this.colorScale ? this.colorScale(d.data.name) : '';
+        return this.colorScale ? this.colorScale(d.data.category) : '';
+      })
+      .attr('class', 'tile')
+      .attr('data-name', (d) => d.data.name)
+      .attr('data-category', (d) => d.data.category)
+      .attr('data-value', (d) => d.data.value)
+      .on('mouseover', (event, d) => {
+        this.toolTipElement.classList.add('visible');
+        this.toolTipElement.style.left = `${event.pageX}px`;
+        this.toolTipElement.style.top = `${event.pageY}px`;
+        this.toolTipElement.innerHTML = `
+          <div>
+            <span class="tooltip-label">Name:</span>
+            <span class="tooltip-value">${d.data.name}</span>
+          </div>
+          <div>
+            <span class="tooltip-label">Category:</span>
+            <span class="tooltip-value">${d.data.category}</span>
+          </div>
+          <div>
+            <span class="tooltip-label">Value:</span>
+            <span class="tooltip-value">${d.data.value}</span>
+          </div>
+        `;
+        this.toolTipElement.setAttribute('data-value', d.data.value);
+      })
+      .on('mouseout', () => {
+        this.toolTipElement.classList.remove('visible');
+        this.toolTipElement.innerHTML = '';
       });
 
     groups
@@ -135,6 +165,7 @@ class Chart {
 
     legendItem
       .append('rect')
+      .attr('class', 'legend-item')
       .attr('width', 20)
       .attr('height', 20)
       .attr('fill', (d) => {
