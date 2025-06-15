@@ -1,24 +1,13 @@
 import './style.css';
 import {
-  axisBottom,
-  extent,
-  geoIdentity,
-  geoPath,
   hierarchy,
   json,
-  scaleLinear,
   scaleOrdinal,
   ScaleOrdinal,
-  ScaleQuantize,
-  scaleQuantize,
-  schemeBlues,
   select,
   Selection,
   treemap,
-  ValueFn,
 } from 'd3';
-
-const textWrap = (window.d3plus as any).textWrap;
 
 type Data = { children: Data[]; name: string; value?: string | number } | null;
 
