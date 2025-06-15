@@ -146,7 +146,7 @@ class Chart {
       .attr('height', 20)
       .attr(
         'transform',
-        (d, i) =>
+        (_, i) =>
           `translate(${(i % 3) * (this.legendWidth / 3)}, ${
             Math.floor(i / 3) * (20 + 10)
           })`
